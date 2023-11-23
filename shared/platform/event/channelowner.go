@@ -7,6 +7,7 @@ import (
 )
 
 type ChannelOwner struct {
+	// TODO: Use an strategy to handle many channels and subscriptions
 	channelEvents chan ChannelEvent
 	// TODO: Use Some table of postgres to this
 	logTrailingDB interface{}
@@ -25,7 +26,7 @@ func (c ChannelOwner) ChannelEvents() <-chan ChannelEvent {
 
 func (c ChannelOwner) Publish(ctx context.Context, events []event.Event) error {
 	for _, evt := range events {
-		// Write in the table of postgres that the event is received by the event bus
+		// TODO: Write in the table of postgres that the event is received by the event bus
 
 		ce := ChannelEvent{
 			Event: evt,

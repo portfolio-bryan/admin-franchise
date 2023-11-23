@@ -2,26 +2,44 @@ package event
 
 import (
 	"context"
+	"log"
 
 	"github.com/bperezgo/admin_franchise/shared/domain/event"
 )
 
 type ChannelUtilizer struct {
-	channelEvent <-chan ChannelEvent
 	handler      event.Handler
+	channelError ChannelError
 }
 
-func NewChannelUtilizer(handler event.Handler, channelEvent <-chan ChannelEvent) ChannelUtilizer {
+func NewChannelUtilizer(handler event.Handler, channelError ChannelError) ChannelUtilizer {
 	return ChannelUtilizer{
 		handler:      handler,
-		channelEvent: channelEvent,
+		channelError: channelError,
 	}
 }
 
-func (c ChannelUtilizer) Use(channelEvents <-chan ChannelEvent) {
+func (c ChannelUtilizer) Use(channelEvent <-chan ChannelEvent) {
 	ctx := context.Background()
-	select {
-	case ce := <-c.channelEvent:
-		c.handler.Handle(ctx, ce.Event)
-	}
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				log.Println("panic occurred in channel utilizer, the go function is rerun again:", err)
+			}
+		}()
+
+		for {
+			select {
+			case ce := <-channelEvent:
+				if ce.Error != nil {
+					c.channelError.Publish(ce.Error)
+					return
+				}
+				if err := c.handler.Handle(ctx, ce.Event); err != nil {
+					c.channelError.Publish(ce.Error)
+					return
+				}
+			}
+		}
+	}()
 }

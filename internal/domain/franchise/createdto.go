@@ -1,6 +1,6 @@
 package franchise
 
 type CreateDTO struct {
-	ID  string
-	URL string
+	ID  string `validate:"required,uuid"`
+	URL string `validate:"required,url"`
 }

@@ -17,11 +17,13 @@ type Resolver struct {
 func NewResolver() *Resolver {
 
 	channelOwner := event.NewChannelOwner()
+	channelError := event.NewChannelError()
 
 	// franchiseCreator is an Event Handler
 	franchiseRepository := postgres.NewFranchisePostgresRepository()
 	franchiseCreator := createfranchise.NewFranchiseCreator(franchiseRepository)
-	event.NewChannelUtilizer(franchiseCreator, channelOwner.ChannelEvents())
+	channelUtilizer := event.NewChannelUtilizer(franchiseCreator, channelError)
+	channelUtilizer.Use(channelOwner.ChannelEvents())
 
 	franchiseCreatorRequestReceiver := createfranchise.NewFranchiseCreatorRequestReceiver(channelOwner)
 	return &Resolver{

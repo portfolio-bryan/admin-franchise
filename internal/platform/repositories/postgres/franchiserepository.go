@@ -16,3 +16,7 @@ func NewFranchisePostgresRepository() *FranchisePostgresRepository {
 func (f FranchisePostgresRepository) Save(ctx context.Context, franchise franchise.Franchise) error {
 	return nil
 }
+
+func (f FranchisePostgresRepository) SaveIncompleteFranchise(ctx context.Context, franchise franchise.IncompleteFranchise) error {
+	return nil
+}
