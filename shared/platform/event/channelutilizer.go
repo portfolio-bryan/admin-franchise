@@ -8,14 +8,16 @@ import (
 )
 
 type ChannelUtilizer struct {
-	handler      event.Handler
-	channelError ChannelError
+	handler       event.Handler
+	channelError  ChannelError
+	logTrailingDB LogTrailingDB
 }
 
-func NewChannelUtilizer(handler event.Handler, channelError ChannelError) ChannelUtilizer {
+func NewChannelUtilizer(handler event.Handler, channelError ChannelError, logTrailingDB LogTrailingDB) ChannelUtilizer {
 	return ChannelUtilizer{
-		handler:      handler,
-		channelError: channelError,
+		handler:       handler,
+		channelError:  channelError,
+		logTrailingDB: logTrailingDB,
 	}
 }
 
@@ -35,10 +37,13 @@ func (c ChannelUtilizer) Use(channelEvent <-chan ChannelEvent) {
 					c.channelError.Publish(ce.Error)
 					return
 				}
+
 				if err := c.handler.Handle(ctx, ce.Event); err != nil {
 					c.channelError.Publish(ce.Error)
 					return
 				}
+
+				c.logTrailingDB.FulfillEvent(ce.Event)
 			}
 		}
 	}()

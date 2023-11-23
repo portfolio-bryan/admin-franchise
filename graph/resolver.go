@@ -1,9 +1,11 @@
 package graph
 
 import (
+	"github.com/bperezgo/admin_franchise/config"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/createfranchise"
-	"github.com/bperezgo/admin_franchise/internal/platform/repositories/postgres"
+	repo "github.com/bperezgo/admin_franchise/internal/platform/repositories/postgres"
 	"github.com/bperezgo/admin_franchise/shared/platform/event"
+	"github.com/bperezgo/admin_franchise/shared/platform/repositories/postgres"
 )
 
 // This file will not be regenerated automatically.
@@ -15,14 +17,25 @@ type Resolver struct {
 }
 
 func NewResolver() *Resolver {
+	c := config.GetConfig()
 
-	channelOwner := event.NewChannelOwner()
+	db := postgres.New(postgres.PostgresConfig{
+		Host:     c.POSTGRES_HOST,
+		Port:     c.POSTGRES_PORT,
+		User:     c.POSTGRES_USERNAME,
+		Password: c.POSTGRES_PASSWORD,
+		DBName:   c.POSTGRES_DATABASE,
+	})
+
+	logTrailingDB := event.NewLogTrailingDB(db)
+
+	channelOwner := event.NewChannelOwner(logTrailingDB)
 	channelError := event.NewChannelError()
 
 	// franchiseCreator is an Event Handler
-	franchiseRepository := postgres.NewFranchisePostgresRepository()
+	franchiseRepository := repo.NewFranchisePostgresRepository()
 	franchiseCreator := createfranchise.NewFranchiseCreator(franchiseRepository)
-	channelUtilizer := event.NewChannelUtilizer(franchiseCreator, channelError)
+	channelUtilizer := event.NewChannelUtilizer(franchiseCreator, channelError, logTrailingDB)
 	channelUtilizer.Use(channelOwner.ChannelEvents())
 
 	franchiseCreatorRequestReceiver := createfranchise.NewFranchiseCreatorRequestReceiver(channelOwner)

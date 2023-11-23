@@ -27,6 +27,7 @@ type Event interface {
 	AggregateID() string
 	OccurredOn() time.Time
 	Type() Type
+	Data() []byte // Generally is a json
 }
 
 type BaseEvent struct {
@@ -53,4 +54,8 @@ func (b BaseEvent) OccurredOn() time.Time {
 
 func (b BaseEvent) AggregateID() string {
 	return b.aggregateID
+}
+
+func (b BaseEvent) EventID() string {
+	return b.eventID
 }

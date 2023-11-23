@@ -19,7 +19,7 @@ type PostgresRepository struct {
 	PostgresDB *gorm.DB
 }
 
-func New(config PostgresConfig) *PostgresRepository {
+func New(config PostgresConfig) PostgresRepository {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=america/bogota",
 		config.Host,
 		config.User,
@@ -33,8 +33,7 @@ func New(config PostgresConfig) *PostgresRepository {
 		panic(err)
 	}
 
-	// TODO: Migrate the schema
-	return &PostgresRepository{
+	return PostgresRepository{
 		PostgresDB: db,
 	}
 }
