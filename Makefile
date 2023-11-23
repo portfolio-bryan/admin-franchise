@@ -28,3 +28,6 @@ docker-build:
 
 docker-compose-up:
 	docker-compose -f ./docker/docker-compose.yml up --build
+
+create-migration:
+	migrate create -ext sql -dir setup/migrations -seq $(name)
