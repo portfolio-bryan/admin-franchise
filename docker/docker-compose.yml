@@ -1,6 +1,8 @@
 version: '3'
 services:
   app:
+    env_file:
+      - ../.env
     build:
       context: ..
       dockerfile: ./docker/Dockerfile
@@ -11,23 +13,26 @@ services:
     depends_on:
       - postgres_db
     environment:
-      - SERVER_PORT=8080
+      - ENVIRONMENT=${ENVIRONMENT}
+      - SERVER_PORT=${SERVER_PORT}
       - POSTGRES_HOST=postgres_db
       - POSTGRES_PORT=5432
-      - POSTGRES_USERNAME=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DATABASE=admin_franchise
-      - POSTGRES_SSLMODE=disable
-      - POSTGRES_MAX_IDLE_CONNS=10
-      - POSTGRES_MAX_OPEN_CONNS=10
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - POSTGRES_SSLMODE=${POSTGRES_SSLMODE}
+      - POSTGRES_MAX_IDLE_CONNS=${POSTGRES_MAX_IDLE_CONNS}
+      - POSTGRES_MAX_OPEN_CONNS=${POSTGRES_MAX_OPEN_CONNS}
 
   postgres_db:
+    env_file:
+      - ../.env
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=admin_franchise
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
     ports:
       - '5433:5432'
     volumes:
