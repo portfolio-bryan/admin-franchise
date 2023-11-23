@@ -25,3 +25,6 @@ build:
 
 docker-build:
 	docker build -t admin-franchise:v1 -f docker/Dockerfile .
+
+docker-compose-up:
+	docker-compose -f ./docker/docker-compose.yml up --build

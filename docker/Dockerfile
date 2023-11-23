@@ -5,7 +5,7 @@ ENV SERVER_PORT=8080
 
 WORKDIR /app
 
-COPY go.* .
+COPY go.* ./
 
 RUN go mod download
 
@@ -13,8 +13,8 @@ RUN go mod verify
 
 COPY . .
 
-RUN go build -v -o /app server.go
+RUN go build -o /app/server server.go
 
 EXPOSE $SERVER_PORT
 
-CMD ["/app/main"]
+CMD ["/app/server"]
