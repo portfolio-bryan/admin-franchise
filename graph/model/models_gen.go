@@ -9,6 +9,11 @@ type AddressLocation struct {
 	ZipCode  string    `json:"zipCode"`
 }
 
+type AddressLocationCriteria struct {
+	Address *string `json:"address,omitempty"`
+	ZipCode *string `json:"zipCode,omitempty"`
+}
+
 type Company struct {
 	ID              string           `json:"id"`
 	Name            string           `json:"name"`
@@ -67,7 +72,9 @@ type OwnerCompany struct {
 }
 
 type UpdateFranchise struct {
-	URL     *string `json:"url,omitempty"`
-	Name    *string `json:"name,omitempty"`
-	Company *string `json:"company,omitempty"`
+	URL             *string                  `json:"url,omitempty"`
+	Name            *string                  `json:"name,omitempty"`
+	Company         *string                  `json:"company,omitempty"`
+	Location        *LocationCriteria        `json:"location,omitempty"`
+	AddressLocation *AddressLocationCriteria `json:"addressLocation,omitempty"`
 }

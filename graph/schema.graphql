@@ -52,6 +52,11 @@ input LocationCriteria {
   country: String
 }
 
+input AddressLocationCriteria {
+  address: String
+  zipCode: String
+}
+
 input FranchisesCriteria {
   name: String
   company: ID
@@ -73,6 +78,8 @@ input UpdateFranchise {
   url: String
   name: String
   company: ID
+  location: LocationCriteria
+  addressLocation: AddressLocationCriteria
 }
 
 type Mutation {

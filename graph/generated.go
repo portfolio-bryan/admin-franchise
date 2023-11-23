@@ -14,7 +14,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/bperezgo/whois/graph/model"
+	"github.com/bperezgo/admin_franchise/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -398,6 +398,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputAddressLocationCriteria,
 		ec.unmarshalInputFranchiseCriteria,
 		ec.unmarshalInputFranchisesCriteria,
 		ec.unmarshalInputLocationCriteria,
@@ -525,7 +526,7 @@ func (ec *executionContext) field_Mutation_createFranchise_args(ctx context.Cont
 	var arg0 model.NewFranchise
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewFranchise2githubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐNewFranchise(ctx, tmp)
+		arg0, err = ec.unmarshalNNewFranchise2githubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐNewFranchise(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -549,7 +550,7 @@ func (ec *executionContext) field_Mutation_updateFranchise_args(ctx context.Cont
 	var arg1 model.UpdateFranchise
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateFranchise2githubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐUpdateFranchise(ctx, tmp)
+		arg1, err = ec.unmarshalNUpdateFranchise2githubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐUpdateFranchise(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -579,7 +580,7 @@ func (ec *executionContext) field_Query_getFranchise_args(ctx context.Context, r
 	var arg0 *model.FranchiseCriteria
 	if tmp, ok := rawArgs["criteria"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("criteria"))
-		arg0, err = ec.unmarshalOFranchiseCriteria2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchiseCriteria(ctx, tmp)
+		arg0, err = ec.unmarshalOFranchiseCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchiseCriteria(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -594,7 +595,7 @@ func (ec *executionContext) field_Query_getFranchises_args(ctx context.Context, 
 	var arg0 *model.FranchisesCriteria
 	if tmp, ok := rawArgs["criteria"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("criteria"))
-		arg0, err = ec.unmarshalOFranchisesCriteria2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchisesCriteria(ctx, tmp)
+		arg0, err = ec.unmarshalOFranchisesCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchisesCriteria(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -713,7 +714,7 @@ func (ec *executionContext) _AddressLocation_location(ctx context.Context, field
 	}
 	res := resTmp.(*model.Location)
 	fc.Result = res
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_AddressLocation_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -943,7 +944,7 @@ func (ec *executionContext) _Company_owner(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(*model.OwnerCompany)
 	fc.Result = res
-	return ec.marshalNOwnerCompany2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐOwnerCompany(ctx, field.Selections, res)
+	return ec.marshalNOwnerCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐOwnerCompany(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Company_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1049,7 +1050,7 @@ func (ec *executionContext) _Company_location(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.Location)
 	fc.Result = res
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Company_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1103,7 +1104,7 @@ func (ec *executionContext) _Company_addressLocation(ctx context.Context, field 
 	}
 	res := resTmp.(*model.AddressLocation)
 	fc.Result = res
-	return ec.marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐAddressLocation(ctx, field.Selections, res)
+	return ec.marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐAddressLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Company_addressLocation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1157,7 +1158,7 @@ func (ec *executionContext) _Company_franchises(ctx context.Context, field graph
 	}
 	res := resTmp.([]*model.Franchise)
 	fc.Result = res
-	return ec.marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchiseᚄ(ctx, field.Selections, res)
+	return ec.marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchiseᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Company_franchises(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1347,7 +1348,7 @@ func (ec *executionContext) _Franchise_company(ctx context.Context, field graphq
 	}
 	res := resTmp.(*model.Company)
 	fc.Result = res
-	return ec.marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐCompany(ctx, field.Selections, res)
+	return ec.marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompany(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Franchise_company(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1407,7 +1408,7 @@ func (ec *executionContext) _Franchise_location(ctx context.Context, field graph
 	}
 	res := resTmp.(*model.Location)
 	fc.Result = res
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Franchise_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1461,7 +1462,7 @@ func (ec *executionContext) _Franchise_addressLocation(ctx context.Context, fiel
 	}
 	res := resTmp.(*model.AddressLocation)
 	fc.Result = res
-	return ec.marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐAddressLocation(ctx, field.Selections, res)
+	return ec.marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐAddressLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Franchise_addressLocation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1691,7 +1692,7 @@ func (ec *executionContext) _Mutation_createFranchise(ctx context.Context, field
 	}
 	res := resTmp.(*model.Franchise)
 	fc.Result = res
-	return ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchise(ctx, field.Selections, res)
+	return ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchise(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createFranchise(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1760,7 +1761,7 @@ func (ec *executionContext) _Mutation_updateFranchise(ctx context.Context, field
 	}
 	res := resTmp.(*model.Franchise)
 	fc.Result = res
-	return ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchise(ctx, field.Selections, res)
+	return ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchise(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateFranchise(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2093,7 +2094,7 @@ func (ec *executionContext) _OwnerCompany_location(ctx context.Context, field gr
 	}
 	res := resTmp.(*model.Location)
 	fc.Result = res
-	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
+	return ec.marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OwnerCompany_location(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2147,7 +2148,7 @@ func (ec *executionContext) _OwnerCompany_addressLocation(ctx context.Context, f
 	}
 	res := resTmp.(*model.AddressLocation)
 	fc.Result = res
-	return ec.marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐAddressLocation(ctx, field.Selections, res)
+	return ec.marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐAddressLocation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OwnerCompany_addressLocation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2201,7 +2202,7 @@ func (ec *executionContext) _Query_getFranchise(ctx context.Context, field graph
 	}
 	res := resTmp.(*model.Franchise)
 	fc.Result = res
-	return ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchise(ctx, field.Selections, res)
+	return ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchise(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getFranchise(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2270,7 +2271,7 @@ func (ec *executionContext) _Query_getCompany(ctx context.Context, field graphql
 	}
 	res := resTmp.([]*model.Company)
 	fc.Result = res
-	return ec.marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐCompanyᚄ(ctx, field.Selections, res)
+	return ec.marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompanyᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getCompany(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2330,7 +2331,7 @@ func (ec *executionContext) _Query_getFranchises(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.Franchise)
 	fc.Result = res
-	return ec.marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchiseᚄ(ctx, field.Selections, res)
+	return ec.marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchiseᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getFranchises(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4273,6 +4274,44 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAddressLocationCriteria(ctx context.Context, obj interface{}) (model.AddressLocationCriteria, error) {
+	var it model.AddressLocationCriteria
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"address", "zipCode"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "address":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Address = data
+		case "zipCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("zipCode"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ZipCode = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputFranchiseCriteria(ctx context.Context, obj interface{}) (model.FranchiseCriteria, error) {
 	var it model.FranchiseCriteria
 	asMap := map[string]interface{}{}
@@ -4338,7 +4377,7 @@ func (ec *executionContext) unmarshalInputFranchisesCriteria(ctx context.Context
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
-			data, err := ec.unmarshalOLocationCriteria2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐLocationCriteria(ctx, v)
+			data, err := ec.unmarshalOLocationCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocationCriteria(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4432,7 +4471,7 @@ func (ec *executionContext) unmarshalInputUpdateFranchise(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"url", "name", "company"}
+	fieldsInOrder := [...]string{"url", "name", "company", "location", "addressLocation"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4466,6 +4505,24 @@ func (ec *executionContext) unmarshalInputUpdateFranchise(ctx context.Context, o
 				return it, err
 			}
 			it.Company = data
+		case "location":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("location"))
+			data, err := ec.unmarshalOLocationCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocationCriteria(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Location = data
+		case "addressLocation":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addressLocation"))
+			data, err := ec.unmarshalOAddressLocationCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐAddressLocationCriteria(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddressLocation = data
 		}
 	}
 
@@ -5293,7 +5350,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐAddressLocation(ctx context.Context, sel ast.SelectionSet, v *model.AddressLocation) graphql.Marshaler {
+func (ec *executionContext) marshalNAddressLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐAddressLocation(ctx context.Context, sel ast.SelectionSet, v *model.AddressLocation) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5318,7 +5375,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐCompanyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Company) graphql.Marshaler {
+func (ec *executionContext) marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompanyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Company) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5342,7 +5399,7 @@ func (ec *executionContext) marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋwhoi
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐCompany(ctx, sel, v[i])
+			ret[i] = ec.marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompany(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5362,7 +5419,7 @@ func (ec *executionContext) marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋwhoi
 	return ret
 }
 
-func (ec *executionContext) marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐCompany(ctx context.Context, sel ast.SelectionSet, v *model.Company) graphql.Marshaler {
+func (ec *executionContext) marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompany(ctx context.Context, sel ast.SelectionSet, v *model.Company) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5372,11 +5429,11 @@ func (ec *executionContext) marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋwhois�
 	return ec._Company(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNFranchise2githubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchise(ctx context.Context, sel ast.SelectionSet, v model.Franchise) graphql.Marshaler {
+func (ec *executionContext) marshalNFranchise2githubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchise(ctx context.Context, sel ast.SelectionSet, v model.Franchise) graphql.Marshaler {
 	return ec._Franchise(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchiseᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Franchise) graphql.Marshaler {
+func (ec *executionContext) marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchiseᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Franchise) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5400,7 +5457,7 @@ func (ec *executionContext) marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋwh
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchise(ctx, sel, v[i])
+			ret[i] = ec.marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchise(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5420,7 +5477,7 @@ func (ec *executionContext) marshalNFranchise2ᚕᚖgithubᚗcomᚋbperezgoᚋwh
 	return ret
 }
 
-func (ec *executionContext) marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchise(ctx context.Context, sel ast.SelectionSet, v *model.Franchise) graphql.Marshaler {
+func (ec *executionContext) marshalNFranchise2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchise(ctx context.Context, sel ast.SelectionSet, v *model.Franchise) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5445,7 +5502,7 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐLocation(ctx context.Context, sel ast.SelectionSet, v *model.Location) graphql.Marshaler {
+func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocation(ctx context.Context, sel ast.SelectionSet, v *model.Location) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5455,12 +5512,12 @@ func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋbperezgoᚋwhois�
 	return ec._Location(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNNewFranchise2githubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐNewFranchise(ctx context.Context, v interface{}) (model.NewFranchise, error) {
+func (ec *executionContext) unmarshalNNewFranchise2githubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐNewFranchise(ctx context.Context, v interface{}) (model.NewFranchise, error) {
 	res, err := ec.unmarshalInputNewFranchise(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOwnerCompany2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐOwnerCompany(ctx context.Context, sel ast.SelectionSet, v *model.OwnerCompany) graphql.Marshaler {
+func (ec *executionContext) marshalNOwnerCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐOwnerCompany(ctx context.Context, sel ast.SelectionSet, v *model.OwnerCompany) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5485,7 +5542,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateFranchise2githubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐUpdateFranchise(ctx context.Context, v interface{}) (model.UpdateFranchise, error) {
+func (ec *executionContext) unmarshalNUpdateFranchise2githubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐUpdateFranchise(ctx context.Context, v interface{}) (model.UpdateFranchise, error) {
 	res, err := ec.unmarshalInputUpdateFranchise(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -5743,6 +5800,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalOAddressLocationCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐAddressLocationCriteria(ctx context.Context, v interface{}) (*model.AddressLocationCriteria, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddressLocationCriteria(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5769,7 +5834,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOFranchiseCriteria2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchiseCriteria(ctx context.Context, v interface{}) (*model.FranchiseCriteria, error) {
+func (ec *executionContext) unmarshalOFranchiseCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchiseCriteria(ctx context.Context, v interface{}) (*model.FranchiseCriteria, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5777,7 +5842,7 @@ func (ec *executionContext) unmarshalOFranchiseCriteria2ᚖgithubᚗcomᚋbperez
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOFranchisesCriteria2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐFranchisesCriteria(ctx context.Context, v interface{}) (*model.FranchisesCriteria, error) {
+func (ec *executionContext) unmarshalOFranchisesCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchisesCriteria(ctx context.Context, v interface{}) (*model.FranchisesCriteria, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5801,7 +5866,7 @@ func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalOLocationCriteria2ᚖgithubᚗcomᚋbperezgoᚋwhoisᚋgraphᚋmodelᚐLocationCriteria(ctx context.Context, v interface{}) (*model.LocationCriteria, error) {
+func (ec *executionContext) unmarshalOLocationCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐLocationCriteria(ctx context.Context, v interface{}) (*model.LocationCriteria, error) {
 	if v == nil {
 		return nil, nil
 	}

@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bperezgo/whois/graph/model"
+	"github.com/bperezgo/admin_franchise/graph/model"
 )
 
 // CreateFranchise is the resolver for the createFranchise field.
