@@ -1,0 +1,81 @@
+type Franchise {
+  id: ID!
+  name: String!
+  url: String!
+  company: Company!
+  location: Location!
+  addressLocation: AddressLocation!
+}
+
+type OwnerCompany {
+  id: ID!
+  name: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  location: Location!
+  addressLocation: AddressLocation!
+}
+
+type Company {
+  id: ID!
+  name: String!
+  owner: OwnerCompany!
+  tax_number: String!
+  location: Location!
+  addressLocation: AddressLocation!
+  franchises: [Franchise!]!
+}
+
+type Location {
+  id: ID!
+  city: String!
+  state: String!
+  country: String!
+}
+
+type AddressLocation {
+  id: ID!
+  location: Location!
+  address: String!
+  zipCode: String!
+}
+
+input FranchiseCriteria {
+  name: String
+}
+
+input LocationCriteria {
+  city: String
+  state: String
+  country: String
+}
+
+input FranchisesCriteria {
+  name: String
+  company: ID
+  location: LocationCriteria
+}
+
+type Query {
+  # Supporting only getting franchises by name
+  getFranchise(criteria: FranchiseCriteria): Franchise!
+  getCompany: [Company!]!
+  getFranchises(criteria: FranchisesCriteria): [Franchise!]!
+}
+
+input NewFranchise {
+  url: String!
+}
+
+input UpdateFranchise {
+  url: String
+  name: String
+  company: ID
+}
+
+type Mutation {
+  createFranchise(input: NewFranchise!): Franchise!
+  updateFranchise(id: ID!, input: UpdateFranchise!): Franchise!
+}
