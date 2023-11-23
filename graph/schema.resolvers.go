@@ -9,11 +9,25 @@ import (
 	"fmt"
 
 	"github.com/bperezgo/admin_franchise/graph/model"
+	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
+	"github.com/google/uuid"
 )
 
 // CreateFranchise is the resolver for the createFranchise field.
 func (r *mutationResolver) CreateFranchise(ctx context.Context, input model.NewFranchise) (*model.Franchise, error) {
-	panic(fmt.Errorf("not implemented: CreateFranchise - createFranchise"))
+	dto := franchise.CreateDTO{
+		ID:  uuid.New().String(),
+		URL: input.URL,
+	}
+
+	if err := r.franchiseCreatorRequestReceiver.Receive(ctx, dto); err != nil {
+		return nil, err
+	}
+
+	return &model.Franchise{
+		ID:  dto.ID,
+		URL: dto.URL,
+	}, nil
 }
 
 // UpdateFranchise is the resolver for the updateFranchise field.
