@@ -24,4 +24,4 @@ build:
 	go build -o main ./cmd/main.go
 
 docker-build:
-	docker build -t backoffice-business-app:v1 -f docker/Dockerfile .
+	docker build -t admin-franchise:v1 -f docker/Dockerfile .
