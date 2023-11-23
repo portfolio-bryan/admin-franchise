@@ -19,7 +19,6 @@ func NewFranchiseCreatorRequestReceiver(eventBus sharedevent.Bus) FranchiseCreat
 }
 
 func (f FranchiseCreatorRequestReceiver) Receive(ctx context.Context, createDTO franchise.CreateDTO) error {
-	// Validate the DTO
 	validate := validator.New(validator.WithRequiredStructEnabled())
 
 	err := validate.Struct(createDTO)

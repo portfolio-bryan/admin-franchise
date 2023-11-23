@@ -3,7 +3,6 @@ package createfranchise
 import (
 	"context"
 	"encoding/json"
-	"log"
 
 	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
 	domainFranchise "github.com/bperezgo/admin_franchise/internal/domain/franchise"
@@ -39,11 +38,33 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 		return err
 	}
 
-	log.Println(scrapResponse)
+	// CreateCompany
+	// CreateLocation
+	// CreateAddressLocation
 
-	franchise, err := domainFranchise.NewFranchise("", fData.Url, "", "", "", "")
+	franchiseDTO := domainFranchise.FranchiseDTO{
+		ID:                   fData.AggregateID,
+		URL:                  fData.Url,
+		CompanyID:            "companyID",
+		Title:                scrapResponse.HTMLMetaData.Title,
+		SiteName:             scrapResponse.HTMLMetaData.SiteName,
+		Description:          scrapResponse.HTMLMetaData.Description,
+		Image:                scrapResponse.HTMLMetaData.Image,
+		LocationID:           "locationID",
+		AddressLocationID:    "addressLocationID",
+		Protocol:             scrapResponse.Protocol,
+		DomainJumps:          scrapResponse.Jumps,
+		ServerNames:          scrapResponse.WhoisData.Domain.NameServers,
+		DomainCreationDate:   scrapResponse.WhoisData.Domain.CreatedDate,
+		DomainExpirationDate: scrapResponse.WhoisData.Domain.ExpirationDate,
+		RegistrantName:       scrapResponse.WhoisData.Registrant.Name,
+		RegistrantEmail:      scrapResponse.WhoisData.Registrant.Email,
+	}
+
+	franchise, err := domainFranchise.NewFranchise(franchiseDTO)
+
 	if err != nil {
-		return f.CreateIncompleteFranchise(ctx, domainFranchise.NewIncompleteFranchise())
+		return f.CreateIncompleteFranchise(ctx, domainFranchise.NewIncompleteFranchise(franchiseDTO))
 	}
 
 	return f.Create(ctx, franchise)

@@ -9,24 +9,27 @@ import (
 const FranchiseRequestReceivedType event.Type = "events.franchise.requestreceived"
 
 type FranchiseRequestReceivedEventData struct {
-	EventId string `json:"eventId"`
-	Url     string `json:"url"`
+	AggregateID string `json:"aggregateId"`
+	EventId     string `json:"eventId"`
+	Url         string `json:"url"`
 }
 
 type FranchiseRequestReceivedEvent struct {
 	event.BaseEvent
 	id       string
+	eventID  string
 	url      string
 	duration string
 	data     FranchiseRequestReceivedEventData
 }
 
-func NewFranchiseRequestReceivedEvent(id, url string) FranchiseRequestReceivedEvent {
-	baseEvent := event.NewBaseEvent(id)
+func NewFranchiseRequestReceivedEvent(aggregateID, url string) FranchiseRequestReceivedEvent {
+	baseEvent := event.NewBaseEvent(aggregateID)
 
 	return FranchiseRequestReceivedEvent{
-		id:  baseEvent.EventID(),
-		url: url,
+		id:      aggregateID,
+		url:     url,
+		eventID: baseEvent.EventID(),
 
 		BaseEvent: baseEvent,
 	}
@@ -38,8 +41,9 @@ func (e FranchiseRequestReceivedEvent) Type() event.Type {
 
 func (e FranchiseRequestReceivedEvent) Data() []byte {
 	data := FranchiseRequestReceivedEventData{
-		EventId: e.id,
-		Url:     e.url,
+		AggregateID: e.id,
+		EventId:     e.eventID,
+		Url:         e.url,
 	}
 
 	b, err := json.Marshal(&data)
