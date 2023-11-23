@@ -12,7 +12,7 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${workspaceFolder}/cmd",
+      "program": "${workspaceFolder}/server.go",
       "showLog": false
     }
   ]
