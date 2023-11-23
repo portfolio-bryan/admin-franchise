@@ -2,23 +2,49 @@ package scrapfranquise
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	urlLib "net/url"
 
 	"github.com/likexian/whois"
+	whoisparser "github.com/likexian/whois-parser"
 	"golang.org/x/net/html"
 )
 
 type ScrapResponse struct {
 	HTMLMetaData HTMLMeta
+	Protocol     string
+	Jumps        int
+	WhoisData    whoisparser.WhoisInfo
 }
+
+type WhoisData struct{}
 
 type HTMLMeta struct {
 	Title       string
 	Description string
 	Image       string
 	SiteName    string
+}
+
+type ProtocolAndJumps struct {
+	Protocol string
+	Jumps    int
+}
+
+type Endpoint struct {
+	IpAddress string `json:"ipAddress"`
+	Grade     string `json:"grade"`
+	SeverName string `json:"serverName"`
+}
+
+type SSLLabsResponse struct {
+	Host      string     `json:"host"`
+	Port      int        `json:"port"`
+	Protocol  string     `json:"protocol"`
+	Endpoints []Endpoint `json:"endpoints"`
 }
 
 func ScrapFranquise(ctx context.Context, url string) (ScrapResponse, error) {
@@ -30,13 +56,22 @@ func ScrapFranquise(ctx context.Context, url string) (ScrapResponse, error) {
 	}
 
 	// Get information of the protocol and jumps
-	GetProtocolAndJumps()
+	protocolAndJumps, err := GetProtocolAndJumps(url)
+	if err != nil {
+		return ScrapResponse{}, err
+	}
 
 	// Get whois data
-	GetWhoisData(url)
+	whoisData, err := GetWhoisData(url)
+	if err != nil {
+		return ScrapResponse{}, err
+	}
 
 	return ScrapResponse{
 		HTMLMetaData: htmlMetaData,
+		Protocol:     protocolAndJumps.Protocol,
+		Jumps:        protocolAndJumps.Jumps,
+		WhoisData:    whoisData,
 	}, nil
 }
 
@@ -123,13 +158,51 @@ func extractMetaProperty(t html.Token, prop string) (content string, ok bool) {
 	return
 }
 
-func GetProtocolAndJumps() {
+func GetProtocolAndJumps(url string) (ProtocolAndJumps, error) {
+	ssllabsUrl := fmt.Sprintf("https://api.ssllabs.com/api/v3/analyze?host=%s", url)
 
+	resp, err := http.Get(ssllabsUrl)
+	if err != nil {
+		return ProtocolAndJumps{}, err
+	}
+
+	defer resp.Body.Close()
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ProtocolAndJumps{}, err
+	}
+
+	sslLabsResponse := SSLLabsResponse{}
+
+	err = json.Unmarshal(b, &sslLabsResponse)
+	if err != nil {
+		return ProtocolAndJumps{}, err
+	}
+
+	return ProtocolAndJumps{
+		Protocol: sslLabsResponse.Protocol,
+		Jumps:    len(sslLabsResponse.Endpoints),
+	}, nil
 }
 
-func GetWhoisData(url string) {
-	result, err := whois.Whois(url)
-	if err == nil {
-		fmt.Println("result", result)
+func GetWhoisData(url string) (whoisparser.WhoisInfo, error) {
+	r, err := urlLib.Parse(url)
+	if err != nil {
+		return whoisparser.WhoisInfo{}, err
 	}
+
+	whois_raw, err := whois.Whois(r.Host)
+	if err != nil {
+		return whoisparser.WhoisInfo{}, err
+	}
+
+	result, err := whoisparser.Parse(whois_raw)
+
+	if err != nil {
+		return whoisparser.WhoisInfo{}, err
+	}
+
+	return result, nil
+
 }

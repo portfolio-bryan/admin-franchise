@@ -35,12 +35,12 @@ func (c ChannelUtilizer) Use(channelEvent <-chan ChannelEvent) {
 			case ce := <-channelEvent:
 				if ce.Error != nil {
 					c.channelError.Publish(ce.Error)
-					return
+					continue
 				}
 
 				if err := c.handler.Handle(ctx, ce.Event); err != nil {
 					c.channelError.Publish(ce.Error)
-					return
+					continue
 				}
 
 				c.logTrailingDB.FulfillEvent(ce.Event)

@@ -41,7 +41,7 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 
 	log.Println(scrapResponse)
 
-	franchise, err := domainFranchise.NewFranchise("", "", "", "", "", "")
+	franchise, err := domainFranchise.NewFranchise("", fData.Url, "", "", "", "")
 	if err != nil {
 		return f.CreateIncompleteFranchise(ctx, domainFranchise.NewIncompleteFranchise())
 	}
