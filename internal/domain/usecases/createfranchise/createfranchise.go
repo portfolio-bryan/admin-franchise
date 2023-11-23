@@ -2,9 +2,12 @@ package createfranchise
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 
 	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
 	domainFranchise "github.com/bperezgo/admin_franchise/internal/domain/franchise"
+	"github.com/bperezgo/admin_franchise/internal/domain/usecases/scrapfranquise"
 	"github.com/bperezgo/admin_franchise/internal/ports"
 	"github.com/bperezgo/admin_franchise/shared/domain/event"
 )
@@ -20,12 +23,23 @@ func NewFranchiseCreator(franchiseRepository ports.FranchiseRepository) Franchis
 }
 
 func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
-	// Scrap the web to get the data to build the franchise
-
-	_, ok := evt.(franchise.FranchiseRequestReceivedEvent)
+	franchiseEvt, ok := evt.(franchise.FranchiseRequestReceivedEvent)
 	if !ok {
 		return isNotFranchiseRequestReceivedEvent
 	}
+
+	fData := franchise.FranchiseRequestReceivedEventData{}
+
+	if err := json.Unmarshal(franchiseEvt.Data(), &fData); err != nil {
+		return err
+	}
+
+	scrapResponse, err := scrapfranquise.ScrapFranquise(ctx, fData.Url)
+	if err != nil {
+		return err
+	}
+
+	log.Println(scrapResponse)
 
 	franchise, err := domainFranchise.NewFranchise("", "", "", "", "", "")
 	if err != nil {
