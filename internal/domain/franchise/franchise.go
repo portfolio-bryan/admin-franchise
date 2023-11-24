@@ -6,7 +6,6 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/bperezgo/admin_franchise/shared/domain/valueobjects"
-	"github.com/google/uuid"
 )
 
 type FranchiseDTO struct {
@@ -155,7 +154,7 @@ type FranchiseID struct {
 }
 
 func NewFranchiseID(value string) (FranchiseID, error) {
-	v, err := uuid.Parse(value)
+	v, err := valueobjects.NewUID(value)
 	if err != nil {
 		return FranchiseID{}, fmt.Errorf("%w: %s", ErrInvalidFranchiseID, value)
 	}

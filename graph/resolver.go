@@ -34,7 +34,13 @@ func NewResolver() *Resolver {
 
 	// franchiseCreator is an Event Handler
 	franchiseRepository := repo.NewFranchisePostgresRepository()
-	franchiseCreator := createfranchise.NewFranchiseCreator(franchiseRepository)
+	companyRepository := repo.NewCompanyPostgresRepository()
+	locationRepository := repo.NewLocationPostgresRepository()
+	franchiseCreator := createfranchise.NewFranchiseCreator(
+		franchiseRepository,
+		companyRepository,
+		locationRepository,
+	)
 	channelUtilizer := event.NewChannelUtilizer(franchiseCreator, channelError, logTrailingDB)
 	channelUtilizer.Use(channelOwner.ChannelEvents())
 

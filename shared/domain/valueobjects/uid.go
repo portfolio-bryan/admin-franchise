@@ -24,6 +24,10 @@ func NewUID(value string) (UID, error) {
 	}, nil
 }
 
+func (u UID) String() string {
+	return u.value
+}
+
 type Protocol struct {
 	value string
 }

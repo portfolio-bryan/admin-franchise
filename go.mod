@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/likexian/whois v1.15.1
+	github.com/likexian/whois-parser v1.24.9
 	github.com/vektah/gqlparser/v2 v2.5.10
 	golang.org/x/net v0.18.0
 	gorm.io/driver/postgres v1.5.4
@@ -32,7 +33,6 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/likexian/gokit v0.25.13 // indirect
-	github.com/likexian/whois-parser v1.24.9 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
