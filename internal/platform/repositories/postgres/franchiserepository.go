@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
+	"github.com/bperezgo/admin_franchise/internal/domain/views"
 	"github.com/bperezgo/admin_franchise/shared/platform/repositories/postgres"
 	"gorm.io/gorm"
 )
@@ -83,20 +84,20 @@ func (f FranchisePostgresRepository) SaveIncompleteFranchise(ctx context.Context
 	return trx.Error
 }
 
-func (f FranchisePostgresRepository) GetByName(ctx context.Context, name string) (franchise.Franchise, error) {
+func (f FranchisePostgresRepository) GetByName(ctx context.Context, name string) (views.Franchise, error) {
 	model := FranchiseModel{}
 
-	trx := f.db.First(&model, "site_name = ?", name)
+	trx := f.db.Joins("Company").Joins("Location").Joins("AddressLocation").Where("site_name = ?", name).First(&model)
 
 	if errors.Is(trx.Error, gorm.ErrRecordNotFound) {
-		return franchise.Franchise{}, franchise.ErrFranchiseNotFound
+		return views.Franchise{}, franchise.ErrFranchiseNotFound
 	}
 
 	if trx.Error != nil {
-		return franchise.Franchise{}, trx.Error
+		return views.Franchise{}, trx.Error
 	}
 
-	dto := franchise.FranchiseDTO{
+	return views.Franchise{
 		ID:                   model.ID,
 		URL:                  model.URL,
 		CompanyID:            model.CompanyID,
@@ -113,12 +114,25 @@ func (f FranchisePostgresRepository) GetByName(ctx context.Context, name string)
 		RegistrantEmail:      model.RegistrantEmail,
 		LocationID:           model.LocationID,
 		AddressLocationID:    model.AddressLocationID,
-	}
-	fran, err := franchise.NewFranchise(dto)
-
-	if err != nil {
-		return franchise.Franchise{}, err
-	}
-
-	return fran, nil
+		Company: views.Company{
+			ID:                model.Company.ID,
+			Name:              model.Company.Name,
+			CompanyOwnerID:    model.Company.CompanyOwnerID,
+			TaxNumber:         model.Company.TaxNumber,
+			LocationID:        model.Company.LocationID,
+			AddressLocationID: model.Company.AddressLocationID,
+		},
+		Location: views.Location{
+			ID:      model.Location.ID,
+			City:    model.Location.City,
+			Country: model.Location.Country,
+			State:   model.Location.State,
+		},
+		AddressLocation: views.AddressLocation{
+			ID:         model.AddressLocation.ID,
+			LocationID: model.AddressLocation.LocationID,
+			Address:    model.AddressLocation.Address,
+			ZipCode:    model.AddressLocation.ZipCode,
+		},
+	}, nil
 }

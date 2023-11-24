@@ -6,13 +6,14 @@ import (
 	"github.com/bperezgo/admin_franchise/internal/domain/company"
 	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
 	"github.com/bperezgo/admin_franchise/internal/domain/location"
+	"github.com/bperezgo/admin_franchise/internal/domain/views"
 )
 
 type FranchiseRepository interface {
 	Upsert(ctx context.Context, franchise franchise.Franchise) error
 	SaveIncompleteFranchise(ctx context.Context, franchise franchise.IncompleteFranchise) error
 
-	GetByName(ctx context.Context, name string) (franchise.Franchise, error)
+	GetByName(ctx context.Context, name string) (views.Franchise, error)
 }
 
 type CompanyRepository interface {

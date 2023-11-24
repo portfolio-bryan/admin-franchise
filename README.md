@@ -157,12 +157,20 @@ You can use the next operations when you are interacting with the API:
 query franchiseQuery($criteria: FranchiseCriteria!) {
   getFranchise(criteria: $criteria) {
     id
-    name
+    title
     company {
       id
+      name
+      tax_number
     }
     location {
       id
+      city
+      state
+      country
+    }
+    addressLocation {
+      address
     }
   }
 }
@@ -211,5 +219,3 @@ mutation createFranchiseMutation($input: NewFranchise!) {
   }
 }
 ```
-
-NOTE: logger configuration, and error handling. Update mutation

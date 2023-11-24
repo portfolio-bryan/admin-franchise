@@ -10,6 +10,8 @@ type AddressLocationModel struct {
 	LocationID string
 	Address    string
 	ZipCode    string
+
+	Location LocationModel `gorm:"foreignKey:LocationID;references:ID"`
 }
 
 func (AddressLocationModel) TableName() string {
@@ -24,6 +26,10 @@ type CompanyModel struct {
 	TaxNumber         string
 	LocationID        string
 	AddressLocationID string
+
+	// Franchises      []FranchiseModel
+	Location        LocationModel        `gorm:"foreignKey:LocationID;references:ID"`
+	AddressLocation AddressLocationModel `gorm:"foreignKey:AddressLocationID;references:ID"`
 }
 
 func (CompanyModel) TableName() string {
@@ -48,6 +54,10 @@ type FranchiseModel struct {
 	RegistrantEmail      string
 	LocationID           string
 	AddressLocationID    string
+
+	Company         CompanyModel         `gorm:"foreignKey:CompanyID;references:ID"`
+	Location        LocationModel        `gorm:"foreignKey:LocationID;references:ID"`
+	AddressLocation AddressLocationModel `gorm:"foreignKey:AddressLocationID;references:ID"`
 }
 
 func (FranchiseModel) TableName() string {

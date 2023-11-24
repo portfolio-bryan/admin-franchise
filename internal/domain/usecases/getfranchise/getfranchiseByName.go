@@ -3,7 +3,7 @@ package getfranchise
 import (
 	"context"
 
-	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
+	"github.com/bperezgo/admin_franchise/internal/domain/views"
 	"github.com/bperezgo/admin_franchise/internal/ports"
 )
 
@@ -17,6 +17,6 @@ func NewFranchiseGetter(franchiseRepository ports.FranchiseRepository) Franchise
 	}
 }
 
-func (f FranchiseGetter) GetFranchiseByName(ctx context.Context, name string) (franchise.Franchise, error) {
+func (f FranchiseGetter) GetFranchiseByName(ctx context.Context, name string) (views.Franchise, error) {
 	return f.franchiseRepository.GetByName(ctx, name)
 }

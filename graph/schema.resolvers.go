@@ -44,20 +44,28 @@ func (r *queryResolver) GetFranchise(ctx context.Context, criteria *model.Franch
 		return nil, err
 	}
 
-	dto := fran.DTO()
-
 	return &model.Franchise{
-		ID:    dto.ID,
-		URL:   dto.URL,
-		Title: dto.Title,
+		ID:    fran.ID,
+		URL:   fran.URL,
+		Title: fran.Title,
 		Company: &model.Company{
-			ID: dto.CompanyID,
+			ID:   fran.CompanyID,
+			Name: fran.Company.Name,
+			Owner: &model.OwnerCompany{
+				ID: fran.Company.CompanyOwnerID,
+			},
+			TaxNumber: fran.Company.TaxNumber,
 		},
 		Location: &model.Location{
-			ID: dto.LocationID,
+			ID:      fran.LocationID,
+			City:    fran.Location.City,
+			State:   fran.Location.State,
+			Country: fran.Location.Country,
 		},
 		AddressLocation: &model.AddressLocation{
-			ID: dto.AddressLocationID,
+			ID:      fran.AddressLocationID,
+			Address: fran.AddressLocation.Address,
+			ZipCode: fran.AddressLocation.ZipCode,
 		},
 	}, nil
 }
