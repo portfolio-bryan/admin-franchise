@@ -59,7 +59,9 @@ func UpDocker() Docker {
 
 	log.Println("Connecting to database on url: ", databaseUrl)
 
-	resource.Expire(120) // Tell docker to hard kill the container in 120 seconds
+	if err := resource.Expire(120); err != nil { // Tell docker to hard kill the container in 120 seconds
+		log.Fatalf("Could not set expiration: %s", err)
+	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	pool.MaxWait = 120 * time.Second

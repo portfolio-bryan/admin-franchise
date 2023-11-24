@@ -53,6 +53,9 @@ func buildMigrate(host, port string) *migrate.Migrate {
 			c.POSTGRES_DATABASE,
 		),
 	)
+	if err != nil {
+		log.Fatalln("Failing opening DB : ", err.Error())
+	}
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
