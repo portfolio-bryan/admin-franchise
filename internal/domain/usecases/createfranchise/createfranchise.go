@@ -74,7 +74,7 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 		return err
 	}
 
-	err = f.locationRepository.UpsertAddress(ctx, addressLocationAggregate)
+	addressLocationAggregate, err = f.locationRepository.UpsertAddress(ctx, addressLocationAggregate)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,7 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 		return err
 	}
 
-	err = f.companyRepository.Upsert(ctx, companyAggregate)
+	companyAggregate, err = f.companyRepository.Upsert(ctx, companyAggregate)
 	if err != nil {
 		return err
 	}
@@ -100,13 +100,13 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 	franchiseDTO := domainFranchise.FranchiseDTO{
 		ID:                   fData.AggregateID,
 		URL:                  fData.Url,
-		CompanyID:            "companyID",
+		CompanyID:            companyAggregate.DTO().ID,
 		Title:                scrapResponse.HTMLMetaData.Title,
 		SiteName:             scrapResponse.HTMLMetaData.SiteName,
 		Description:          scrapResponse.HTMLMetaData.Description,
 		Image:                scrapResponse.HTMLMetaData.Image,
-		LocationID:           "locationID",
-		AddressLocationID:    "addressLocationID",
+		LocationID:           locationAggregate.DTO().ID,
+		AddressLocationID:    addressLocationAggregate.DTO().ID,
 		Protocol:             scrapResponse.Protocol,
 		DomainJumps:          scrapResponse.Jumps,
 		ServerNames:          scrapResponse.WhoisData.Domain.NameServers,

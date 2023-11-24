@@ -52,6 +52,36 @@ func (l LocationPostgresRepository) Upsert(ctx context.Context, loc location.Loc
 	return loc, nil
 }
 
-func (l LocationPostgresRepository) UpsertAddress(ctx context.Context, address location.AddressLocation) error {
-	return nil
+func (l LocationPostgresRepository) UpsertAddress(ctx context.Context, addLoc location.AddressLocation) (location.AddressLocation, error) {
+	dto := addLoc.DTO()
+	addLocationModel := AddressLocationModel{
+		ID:         dto.ID,
+		LocationID: dto.LocationID,
+		Address:    dto.Address,
+		ZipCode:    dto.ZipCode,
+	}
+
+	trx := l.db.First(&addLocationModel, "location_id = ? AND address = ? AND zip_code = ?",
+		dto.LocationID,
+		dto.Address,
+		dto.ZipCode,
+	)
+
+	if errors.Is(trx.Error, gorm.ErrRecordNotFound) {
+		trx = l.db.Create(&AddressLocationModel{
+			ID:         dto.ID,
+			LocationID: dto.LocationID,
+			Address:    dto.Address,
+			ZipCode:    dto.ZipCode,
+		})
+
+		return addLoc, nil
+	}
+
+	loc, err := location.NewAddressLocation(addLocationModel.ID, dto.LocationID, dto.Address, dto.ZipCode)
+	if err != nil {
+		return location.AddressLocation{}, err
+	}
+	// TODO: Create an error for the user, only log the the error
+	return loc, nil
 }

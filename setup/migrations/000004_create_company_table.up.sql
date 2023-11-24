@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS company (
 	    REFERENCES locations(id),
   CONSTRAINT fk_address_location
     FOREIGN KEY(address_location_id) 
-      REFERENCES locations(id),
-  CONSTRAINT fk_company_owner
-    FOREIGN KEY(company_owner_id) 
-      REFERENCES company_owner(id)
+      REFERENCES locations(id)
+  -- CONSTRAINT fk_company_owner
+  --   FOREIGN KEY(company_owner_id) 
+  --     REFERENCES company_owner(id)
 );

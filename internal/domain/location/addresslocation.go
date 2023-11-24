@@ -7,7 +7,10 @@ import (
 )
 
 type AddressLocationDTO struct {
-	ID string
+	ID         string
+	LocationID string
+	Address    string
+	ZipCode    string
 }
 
 type AddressLocation struct {
@@ -53,7 +56,10 @@ func NewAddressLocation(
 
 func (a AddressLocation) DTO() AddressLocationDTO {
 	return AddressLocationDTO{
-		ID: a.ID.value,
+		ID:         a.ID.value,
+		LocationID: a.LocationID.String(),
+		Address:    a.Address.value,
+		ZipCode:    a.ZipCode.value,
 	}
 }
 

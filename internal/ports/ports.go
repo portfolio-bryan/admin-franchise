@@ -14,11 +14,11 @@ type FranchiseRepository interface {
 }
 
 type CompanyRepository interface {
-	Upsert(ctx context.Context, company company.Company) error
+	Upsert(ctx context.Context, company company.Company) (company.Company, error)
 }
 
 type LocationRepository interface {
 	Upsert(ctx context.Context, location location.Location) (location.Location, error)
 
-	UpsertAddress(ctx context.Context, address location.AddressLocation) error
+	UpsertAddress(ctx context.Context, address location.AddressLocation) (location.AddressLocation, error)
 }

@@ -3,14 +3,24 @@ package postgres
 import "gorm.io/gorm"
 
 type AddressLocationModel struct {
-	gorm.Model
-	Address string
-	ZipCode string
+	ID         string
+	LocationID string
+	Address    string
+	ZipCode    string
+}
+
+func (AddressLocationModel) TableName() string {
+	return "address_location"
 }
 
 type CompanyModel struct {
 	gorm.Model
-	Name string
+	ID                string
+	Name              string
+	CompanyOwnerID    string
+	TaxNumber         string
+	LocationID        string
+	AddressLocationID string
 }
 
 type FranchiseModel struct {

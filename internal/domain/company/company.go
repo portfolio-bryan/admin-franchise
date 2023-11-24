@@ -2,6 +2,15 @@ package company
 
 import "github.com/bperezgo/admin_franchise/shared/domain/valueobjects"
 
+type CompanyDTO struct {
+	ID                string
+	CompanyOwnerID    string
+	Name              string
+	TaxNumber         string
+	LocationID        string
+	AddressLocationID string
+}
+
 type Company struct {
 	ID                CompanyID
 	CompanyOwnerID    valueobjects.UID
@@ -50,6 +59,17 @@ func NewCompany(id, companyOwnerID, name, taxNumber, locationID, addressLocation
 		LocationID:        locationIDVO,
 		AddressLocationID: addressLocationIDVO,
 	}, nil
+}
+
+func (c Company) DTO() CompanyDTO {
+	return CompanyDTO{
+		ID:                c.ID.value,
+		CompanyOwnerID:    c.CompanyOwnerID.String(),
+		Name:              c.Name.Value,
+		TaxNumber:         c.TaxNumber.Value,
+		LocationID:        c.LocationID.String(),
+		AddressLocationID: c.AddressLocationID.String(),
+	}
 }
 
 type CompanyID struct {
