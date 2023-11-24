@@ -6,8 +6,9 @@ CREATE TABLE IF NOT EXISTS company_owner (
   phone VARCHAR(64) NOT NULL,
   location_id uuid NOT NULL,
   address_location_id uuid NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  deleted_at TIMESTAMPTZ,
   PRIMARY KEY (id),
   CONSTRAINT fk_location
     FOREIGN KEY(location_id) 

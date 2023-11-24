@@ -21,14 +21,7 @@ func NewCompanyPostgresRepository(db postgres.PostgresRepository) *CompanyPostgr
 
 func (c CompanyPostgresRepository) Upsert(ctx context.Context, com company.Company) (company.Company, error) {
 	dto := com.DTO()
-	comModel := CompanyModel{
-		ID:                dto.ID,
-		Name:              dto.Name,
-		CompanyOwnerID:    dto.CompanyOwnerID,
-		TaxNumber:         dto.TaxNumber,
-		AddressLocationID: dto.AddressLocationID,
-		LocationID:        dto.LocationID,
-	}
+	comModel := CompanyModel{}
 
 	trx := c.db.First(&comModel, "name = ?",
 		dto.Name,
@@ -44,16 +37,20 @@ func (c CompanyPostgresRepository) Upsert(ctx context.Context, com company.Compa
 			LocationID:        dto.LocationID,
 		})
 
-		return com, nil
+		return com, trx.Error
+	}
+
+	if trx.Error != nil {
+		return company.Company{}, trx.Error
 	}
 
 	com, err := company.NewCompany(
 		comModel.ID,
-		comModel.CompanyOwnerID,
-		comModel.Name,
-		comModel.TaxNumber,
-		comModel.LocationID,
-		comModel.AddressLocationID,
+		dto.CompanyOwnerID,
+		dto.Name,
+		dto.TaxNumber,
+		dto.LocationID,
+		dto.AddressLocationID,
 	)
 	if err != nil {
 		return company.Company{}, err

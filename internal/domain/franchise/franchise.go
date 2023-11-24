@@ -3,6 +3,8 @@ package franchise
 import (
 	"errors"
 	"fmt"
+	urllib "net/url"
+	"path"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/bperezgo/admin_franchise/shared/domain/valueobjects"
@@ -72,7 +74,7 @@ func NewFranchise(franchiseDTO FranchiseDTO) (Franchise, error) {
 		return Franchise{}, err
 	}
 
-	imageVO, err := NewFranchiseImage(franchiseDTO.Image)
+	imageVO, err := NewFranchiseImage(franchiseDTO.Image, franchiseDTO.URL)
 	if err != nil {
 		return Franchise{}, err
 	}
@@ -238,11 +240,20 @@ type FranchiseImage struct {
 	value string
 }
 
-var ErrInvalidFranchiseImage = errors.New("the field Franchise Image can not be empty")
+var ErrInvalidFranchiseImage = errors.New("the field Franchise Image is invalid")
 
-func NewFranchiseImage(value string) (FranchiseImage, error) {
+func NewFranchiseImage(value, url string) (FranchiseImage, error) {
 	if ok := govalidator.IsURL(value); !ok {
-		return FranchiseImage{}, ErrInvalidFranchiseImage
+		u, err := urllib.Parse(url)
+		if err != nil {
+			return FranchiseImage{}, ErrInvalidFranchiseImage
+		}
+
+		value := path.Join(u.Host, value)
+
+		return FranchiseImage{
+			value: value,
+		}, nil
 	}
 
 	return FranchiseImage{

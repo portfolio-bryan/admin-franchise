@@ -22,24 +22,7 @@ func NewFranchisePostgresRepository(db postgres.PostgresRepository) *FranchisePo
 
 func (f FranchisePostgresRepository) Upsert(ctx context.Context, fran franchise.Franchise) error {
 	dto := fran.DTO()
-	model := FranchiseModel{
-		ID:                   dto.ID,
-		CompanyID:            dto.CompanyID,
-		Title:                dto.Title,
-		SiteName:             dto.SiteName,
-		Description:          dto.Description,
-		Image:                dto.Image,
-		URL:                  dto.URL,
-		Protocol:             dto.Protocol,
-		DomainJumps:          dto.DomainJumps,
-		ServerNames:          dto.ServerNames,
-		DomainCreationDate:   dto.DomainCreationDate,
-		DomainExpirationDate: dto.DomainExpirationDate,
-		RegistrantName:       dto.RegistrantName,
-		RegistrantEmail:      dto.RegistrantEmail,
-		LocationID:           dto.LocationID,
-		AddressLocationID:    dto.AddressLocationID,
-	}
+	model := FranchiseModel{}
 
 	trx := f.db.First(&model, "title = ? AND company_id = ?",
 		dto.Title,
@@ -66,7 +49,11 @@ func (f FranchisePostgresRepository) Upsert(ctx context.Context, fran franchise.
 			AddressLocationID:    dto.AddressLocationID,
 		})
 
-		return nil
+		return trx.Error
+	}
+
+	if trx.Error != nil {
+		return trx.Error
 	}
 
 	// TODO: Create an error for the user, only log the the error
@@ -83,11 +70,13 @@ func (f FranchisePostgresRepository) SaveIncompleteFranchise(ctx context.Context
 	}
 
 	trx := f.db.Create(&IncompleteFranchiseModel{
-		ID:          dto.ID,
-		Data:        string(b),
-		WasVerified: false,
-		URL:         dto.URL,
-		Name:        dto.Title,
+		ID:                dto.ID,
+		Data:              string(b),
+		WasVerified:       false,
+		URL:               dto.URL,
+		Name:              dto.Title,
+		LocationID:        dto.LocationID,
+		AddressLocationID: dto.AddressLocationID,
 	})
 
 	// TODO: Create an error for the user, only log the the error

@@ -56,11 +56,13 @@ func (FranchiseModel) TableName() string {
 
 type IncompleteFranchiseModel struct {
 	gorm.Model
-	ID          string
-	Data        string
-	WasVerified bool
-	URL         string
-	Name        string
+	ID                string
+	Data              string
+	WasVerified       bool
+	URL               string
+	Name              string
+	LocationID        string
+	AddressLocationID string
 }
 
 func (IncompleteFranchiseModel) TableName() string {

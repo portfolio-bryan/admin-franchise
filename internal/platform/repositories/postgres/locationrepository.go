@@ -21,11 +21,7 @@ func NewLocationPostgresRepository(db postgres.PostgresRepository) *LocationPost
 
 func (l LocationPostgresRepository) Upsert(ctx context.Context, loc location.Location) (location.Location, error) {
 	dto := loc.DTO()
-	locationModel := LocationModel{
-		City:    dto.City,
-		Country: dto.Country,
-		State:   dto.State,
-	}
+	locationModel := LocationModel{}
 
 	trx := l.db.First(&locationModel, "city = ? AND country = ? AND state = ?",
 		dto.City,
@@ -41,7 +37,11 @@ func (l LocationPostgresRepository) Upsert(ctx context.Context, loc location.Loc
 			State:   dto.State,
 		})
 
-		return loc, nil
+		return loc, trx.Error
+	}
+
+	if trx.Error != nil {
+		return location.Location{}, trx.Error
 	}
 
 	loc, err := location.NewLocation(locationModel.ID, dto.Country, dto.State, dto.City)
@@ -54,15 +54,9 @@ func (l LocationPostgresRepository) Upsert(ctx context.Context, loc location.Loc
 
 func (l LocationPostgresRepository) UpsertAddress(ctx context.Context, addLoc location.AddressLocation) (location.AddressLocation, error) {
 	dto := addLoc.DTO()
-	addLocationModel := AddressLocationModel{
-		ID:         dto.ID,
-		LocationID: dto.LocationID,
-		Address:    dto.Address,
-		ZipCode:    dto.ZipCode,
-	}
+	addLocationModel := AddressLocationModel{}
 
-	trx := l.db.First(&addLocationModel, "location_id = ? AND address = ? AND zip_code = ?",
-		dto.LocationID,
+	trx := l.db.First(&addLocationModel, "address = ? AND zip_code = ?",
 		dto.Address,
 		dto.ZipCode,
 	)
@@ -76,6 +70,10 @@ func (l LocationPostgresRepository) UpsertAddress(ctx context.Context, addLoc lo
 		})
 
 		return addLoc, nil
+	}
+
+	if trx.Error != nil {
+		return location.AddressLocation{}, trx.Error
 	}
 
 	loc, err := location.NewAddressLocation(addLocationModel.ID, dto.LocationID, dto.Address, dto.ZipCode)
