@@ -9,7 +9,7 @@ import (
 
 func MetadataMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx := context.WithValue(c.Request.Context(), "RequestID", uuid.NewString())
+		ctx := context.WithValue(c.Request.Context(), RequestIDKey, uuid.NewString())
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}

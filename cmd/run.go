@@ -48,5 +48,7 @@ func Run() {
 	r.Use(middlewares.LoggingMiddleware())
 	r.POST("/query", graphqlHandler())
 	r.GET("/", playgroundHandler())
-	r.Run(fmt.Sprintf(":%s", port))
+	if err := r.Run(fmt.Sprintf(":%s", port)); err != nil {
+		log.Fatal("error running server", err)
+	}
 }

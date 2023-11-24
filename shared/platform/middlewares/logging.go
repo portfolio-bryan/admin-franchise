@@ -11,9 +11,9 @@ func LoggingMiddleware() gin.HandlerFunc {
 		var requestID string
 
 		ctx := c.Request.Context()
-		ctx.Value("RequestID")
+		ctx.Value(RequestIDKey)
 
-		requestID, ok := ctx.Value("RequestID").(string)
+		requestID, ok := ctx.Value(RequestIDKey).(string)
 		if !ok {
 			requestID = ""
 		}
