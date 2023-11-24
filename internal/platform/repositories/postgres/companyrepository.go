@@ -58,3 +58,30 @@ func (c CompanyPostgresRepository) Upsert(ctx context.Context, com company.Compa
 	// TODO: Create an error for the user, only log the the error
 	return com, nil
 }
+
+func (c CompanyPostgresRepository) GetByName(ctx context.Context, name string) (company.Company, error) {
+	comModel := CompanyModel{}
+
+	trx := c.db.First(&comModel, "name = ?", name)
+	if errors.Is(trx.Error, gorm.ErrRecordNotFound) {
+		return company.Company{}, company.ErrCompanyNotFound
+	}
+
+	if trx.Error != nil {
+		return company.Company{}, trx.Error
+	}
+
+	com, err := company.NewCompany(
+		comModel.ID,
+		comModel.CompanyOwnerID,
+		comModel.Name,
+		comModel.TaxNumber,
+		comModel.LocationID,
+		comModel.AddressLocationID,
+	)
+	if err != nil {
+		return company.Company{}, err
+	}
+
+	return com, nil
+}

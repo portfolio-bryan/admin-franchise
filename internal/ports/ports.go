@@ -17,6 +17,8 @@ type FranchiseRepository interface {
 
 type CompanyRepository interface {
 	Upsert(ctx context.Context, company company.Company) (company.Company, error)
+
+	GetByName(ctx context.Context, name string) (company.Company, error)
 }
 
 type LocationRepository interface {

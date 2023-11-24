@@ -4,6 +4,7 @@ import (
 	"github.com/bperezgo/admin_franchise/config"
 	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/createfranchise"
+	"github.com/bperezgo/admin_franchise/internal/domain/usecases/getcompany"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/getfranchise"
 	repo "github.com/bperezgo/admin_franchise/internal/platform/repositories/postgres"
 	"github.com/bperezgo/admin_franchise/shared/platform/event"
@@ -17,6 +18,7 @@ import (
 type Resolver struct {
 	franchiseCreatorRequestReceiver createfranchise.FranchiseCreatorRequestReceiver
 	franchiseGetter                 getfranchise.FranchiseGetter
+	companyGetter                   getcompany.CompanyGetter
 }
 
 func NewResolver() *Resolver {
@@ -52,8 +54,12 @@ func NewResolver() *Resolver {
 	// FranchiseGetter UseCase
 	franchiseGetter := getfranchise.NewFranchiseGetter(franchiseRepository)
 
+	// CompanyGetter UseCase
+	companyGetter := getcompany.NewCompanyGetter(companyRepository)
+
 	return &Resolver{
 		franchiseCreatorRequestReceiver: franchiseCreatorRequestReceiver,
 		franchiseGetter:                 franchiseGetter,
+		companyGetter:                   companyGetter,
 	}
 }
