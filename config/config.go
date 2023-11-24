@@ -40,6 +40,15 @@ func InitConfig() error {
 		return godotenv.Load(os.ExpandEnv(p))
 	}
 
+	if environment == "test" {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		p := path.Join(cwd, "../../.test.env")
+		return godotenv.Load(os.ExpandEnv(p))
+	}
+
 	return nil
 
 }
@@ -94,4 +103,9 @@ func GetConfig() *Config {
 		POSTGRES_MAX_OPEN_CONNS: postgresMaxOpenConns,
 	}
 	return config
+}
+
+// Provisional logic, and it is only useful in tests
+func (c *Config) ChangePostgresPort(port string) {
+	c.POSTGRES_PORT = port
 }
