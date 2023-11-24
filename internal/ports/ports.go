@@ -9,7 +9,7 @@ import (
 )
 
 type FranchiseRepository interface {
-	Save(ctx context.Context, franchise franchise.Franchise) error
+	Upsert(ctx context.Context, franchise franchise.Franchise) error
 	SaveIncompleteFranchise(ctx context.Context, franchise franchise.IncompleteFranchise) error
 }
 

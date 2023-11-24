@@ -1,6 +1,9 @@
 package postgres
 
-import "gorm.io/gorm"
+import (
+	"github.com/lib/pq"
+	"gorm.io/gorm"
+)
 
 type AddressLocationModel struct {
 	ID         string
@@ -23,9 +26,45 @@ type CompanyModel struct {
 	AddressLocationID string
 }
 
+func (CompanyModel) TableName() string {
+	return "company"
+}
+
 type FranchiseModel struct {
 	gorm.Model
-	Name string
+	ID                   string
+	CompanyID            string
+	Title                string
+	SiteName             string
+	Description          string
+	Image                string
+	URL                  string
+	Protocol             string
+	DomainJumps          int
+	ServerNames          pq.StringArray `gorm:"type:text[]"`
+	DomainCreationDate   string
+	DomainExpirationDate string
+	RegistrantName       string
+	RegistrantEmail      string
+	LocationID           string
+	AddressLocationID    string
+}
+
+func (FranchiseModel) TableName() string {
+	return "franchise"
+}
+
+type IncompleteFranchiseModel struct {
+	gorm.Model
+	ID          string
+	Data        string
+	WasVerified bool
+	URL         string
+	Name        string
+}
+
+func (IncompleteFranchiseModel) TableName() string {
+	return "incomplete_franchise"
 }
 
 type CompanyOwnerModel struct {

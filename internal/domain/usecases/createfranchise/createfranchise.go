@@ -122,5 +122,5 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 		return f.franchiseRepository.SaveIncompleteFranchise(ctx, domainFranchise.NewIncompleteFranchise(franchiseDTO))
 	}
 
-	return f.franchiseRepository.Save(ctx, franchise)
+	return f.franchiseRepository.Upsert(ctx, franchise)
 }

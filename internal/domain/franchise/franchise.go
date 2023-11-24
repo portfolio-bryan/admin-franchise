@@ -35,7 +35,7 @@ type Franchise struct {
 	description          FranchiseDescription
 	image                FranchiseImage
 	siteName             FranchiseSiteName
-	protocol             valueobjects.Protocol
+	protocol             Protocol
 	domainJumps          FranchiseDomainJumps
 	serverNames          FranchiseServerNames
 	domainCreationDate   FranchiseDomainCreationDate
@@ -82,7 +82,7 @@ func NewFranchise(franchiseDTO FranchiseDTO) (Franchise, error) {
 		return Franchise{}, err
 	}
 
-	protocolVO, err := valueobjects.NewProtocol(franchiseDTO.Protocol)
+	protocolVO, err := NewProtocol(franchiseDTO.Protocol)
 	if err != nil {
 		return Franchise{}, err
 	}
@@ -145,6 +145,27 @@ func NewFranchise(franchiseDTO FranchiseDTO) (Franchise, error) {
 		locationId:           locationIdVO,
 		addressLocationId:    addressLocationIdVO,
 	}, nil
+}
+
+func (f Franchise) DTO() FranchiseDTO {
+	return FranchiseDTO{
+		ID:                   f.id.value,
+		URL:                  f.url.value,
+		CompanyID:            f.companyId.String(),
+		Title:                f.title.value,
+		Description:          f.description.value,
+		Image:                f.image.value,
+		SiteName:             f.siteName.value,
+		Protocol:             f.protocol.value,
+		DomainJumps:          f.domainJumps.value,
+		ServerNames:          f.serverNames.value,
+		DomainCreationDate:   f.domainCreationDate.value,
+		DomainExpirationDate: f.domainExpirationDate.value,
+		RegistrantName:       f.registrantName.value,
+		RegistrantEmail:      f.registrantEmail.value,
+		LocationID:           f.locationId.String(),
+		AddressLocationID:    f.addressLocationId.String(),
+	}
 }
 
 var ErrInvalidFranchiseID = errors.New("invalid Franchise ID")
@@ -241,6 +262,23 @@ func NewFranchiseSiteName(value string) (FranchiseSiteName, error) {
 	}
 
 	return FranchiseSiteName{
+		value: value,
+	}, nil
+}
+
+type Protocol struct {
+	value string
+}
+
+var ErrInvalidProtocol = errors.New("invalid Protocol")
+
+func NewProtocol(value string) (Protocol, error) {
+	// Provisional logic
+	if value != "http" && value != "https" {
+		return Protocol{}, fmt.Errorf("%w: %s", ErrInvalidProtocol, value)
+	}
+
+	return Protocol{
 		value: value,
 	}, nil
 }

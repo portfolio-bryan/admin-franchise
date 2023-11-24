@@ -27,20 +27,3 @@ func NewUID(value string) (UID, error) {
 func (u UID) String() string {
 	return u.value
 }
-
-type Protocol struct {
-	value string
-}
-
-var ErrInvalidProtocol = errors.New("invalid Protocol")
-
-func NewProtocol(value string) (Protocol, error) {
-	// Provisional logic
-	if value != "http" && value != "https" {
-		return Protocol{}, fmt.Errorf("%w: %s", ErrInvalidProtocol, value)
-	}
-
-	return Protocol{
-		value: value,
-	}, nil
-}
