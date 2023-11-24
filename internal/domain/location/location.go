@@ -51,7 +51,10 @@ func NewLocation(id, country, state, city string) (Location, error) {
 
 func (l Location) DTO() LocationDTO {
 	return LocationDTO{
-		ID: l.ID.Value,
+		ID:      l.ID.Value,
+		Country: l.Country.value,
+		State:   l.State.value,
+		City:    l.City.value,
 	}
 }
 

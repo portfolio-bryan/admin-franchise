@@ -2,31 +2,35 @@ package postgres
 
 import "gorm.io/gorm"
 
-type AddressLocation struct {
+type AddressLocationModel struct {
 	gorm.Model
 	Address string
 	ZipCode string
 }
 
-type Company struct {
+type CompanyModel struct {
 	gorm.Model
 	Name string
 }
 
-type Franchise struct {
+type FranchiseModel struct {
 	gorm.Model
 	Name string
 }
 
-type CompanyOwner struct {
+type CompanyOwnerModel struct {
 	gorm.Model
 	CompanyID uint
 	Id        uint
 }
 
-type Location struct {
-	gorm.Model
+type LocationModel struct {
+	ID      string
 	City    string
 	Country string
 	State   string
+}
+
+func (LocationModel) TableName() string {
+	return "locations"
 }

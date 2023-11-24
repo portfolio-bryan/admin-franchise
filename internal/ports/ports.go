@@ -18,7 +18,7 @@ type CompanyRepository interface {
 }
 
 type LocationRepository interface {
-	Upsert(ctx context.Context, location location.Location) error
+	Upsert(ctx context.Context, location location.Location) (location.Location, error)
 
 	UpsertAddress(ctx context.Context, address location.AddressLocation) error
 }

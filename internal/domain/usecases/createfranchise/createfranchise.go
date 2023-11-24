@@ -59,7 +59,7 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 		return err
 	}
 
-	err = f.locationRepository.Upsert(ctx, locationAggregate)
+	locationAggregate, err = f.locationRepository.Upsert(ctx, locationAggregate)
 	if err != nil {
 		return err
 	}
