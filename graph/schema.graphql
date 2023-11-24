@@ -1,6 +1,7 @@
 type Franchise {
   id: ID!
-  name: String!
+  title: String!
+  siteName: String!
   url: String!
   company: Company!
   location: Location!

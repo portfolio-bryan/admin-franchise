@@ -11,6 +11,8 @@ import (
 type FranchiseRepository interface {
 	Upsert(ctx context.Context, franchise franchise.Franchise) error
 	SaveIncompleteFranchise(ctx context.Context, franchise franchise.IncompleteFranchise) error
+
+	GetByName(ctx context.Context, name string) (franchise.Franchise, error)
 }
 
 type CompanyRepository interface {
