@@ -34,7 +34,7 @@ The use cases to get franchise and get company are direct queries to the databas
 
 In the next image you can see a more specific flow for the creation request.
 
-![Flow Diagram](./docs/images/ClubHub-tech-test-Flows-Creation.jpg)
+![Flow Diagram for Creation](./docs/images/ClubHub-tech-test-Creation.jpg)
 
 It is used an async process to handle the scrapping process in another goroutine, so the request can be finished and the user can get a response. The scrapping process is handled by the strategy ChannelOwner/ChannelUtilizer, so we can have a better control of the process and we can handle the errors in a better way.
 
@@ -153,6 +153,7 @@ You can use the next operations when you are interacting with the API:
 ### Queries
 
 ```graphql
+# Operation
 query franchiseQuery($criteria: FranchiseCriteria!) {
   getFranchise(criteria: $criteria) {
     id
@@ -166,12 +167,14 @@ query franchiseQuery($criteria: FranchiseCriteria!) {
   }
 }
 
+# Variables
 {
   "criteria": {
     "name": "Marriott Bonvoy"
   }
 }
 
+# Operation
 query companyQuery($input: CompanyCriteria!) {
   getCompany(criteria: $input) {
     id
@@ -182,6 +185,7 @@ query companyQuery($input: CompanyCriteria!) {
   }
 }
 
+# Variables
 {
   "input": {
     "name": "Marriott International, Inc."
@@ -192,6 +196,7 @@ query companyQuery($input: CompanyCriteria!) {
 ### Mutations
 
 ```graphql
+# Operation
 mutation createFranchiseMutation($input: NewFranchise!) {
   createFranchise(input: $input) {
     id
@@ -199,6 +204,7 @@ mutation createFranchiseMutation($input: NewFranchise!) {
   }
 }
 
+# Variables
 {
   "input": {
     "url": "https://marriott.com/"
