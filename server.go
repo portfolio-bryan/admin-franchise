@@ -10,8 +10,6 @@ import (
 	"github.com/bperezgo/admin_franchise/graph"
 )
 
-const defaultPort = "8080"
-
 func main() {
 	err := config.InitConfig()
 	if err != nil {

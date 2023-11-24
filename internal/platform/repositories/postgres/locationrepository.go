@@ -69,7 +69,7 @@ func (l LocationPostgresRepository) UpsertAddress(ctx context.Context, addLoc lo
 			ZipCode:    dto.ZipCode,
 		})
 
-		return addLoc, nil
+		return addLoc, trx.Error
 	}
 
 	if trx.Error != nil {

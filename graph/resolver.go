@@ -29,8 +29,8 @@ func NewResolver() *Resolver {
 
 	logTrailingDB := event.NewLogTrailingDB(db)
 
-	channelOwner := event.NewChannelOwner(logTrailingDB)
 	channelError := event.NewChannelError()
+	channelOwner := event.NewChannelOwner(logTrailingDB, channelError)
 
 	// franchiseCreator is an Event Handler
 	franchiseRepository := repo.NewFranchisePostgresRepository(db)

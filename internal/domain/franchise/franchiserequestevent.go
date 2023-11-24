@@ -16,11 +16,9 @@ type FranchiseRequestReceivedEventData struct {
 
 type FranchiseRequestReceivedEvent struct {
 	event.BaseEvent
-	id       string
-	eventID  string
-	url      string
-	duration string
-	data     FranchiseRequestReceivedEventData
+	id      string
+	eventID string
+	url     string
 }
 
 func NewFranchiseRequestReceivedEvent(aggregateID, url string) FranchiseRequestReceivedEvent {

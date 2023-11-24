@@ -29,12 +29,9 @@ func (c ChannelError) Publish(err error) {
 func (c ChannelError) listen() {
 	// TODO: Handle all the errors continuously
 	go func() {
-		for {
-			select {
-			case err := <-c.internalChan:
-				if err.Err != nil {
-					log.Println(err)
-				}
+		for err := range c.internalChan {
+			if err.Err != nil {
+				log.Println(err)
 			}
 		}
 	}()

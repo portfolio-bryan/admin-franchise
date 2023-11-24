@@ -30,20 +30,20 @@ func (c ChannelUtilizer) Use(channelEvent <-chan ChannelEvent) {
 			}
 		}()
 
-		for {
-			select {
-			case ce := <-channelEvent:
-				if ce.Error != nil {
-					c.channelError.Publish(ce.Error)
-					continue
-				}
+		for ce := range channelEvent {
+			if ce.Error != nil {
+				c.channelError.Publish(ce.Error)
+				continue
+			}
 
-				if err := c.handler.Handle(ctx, ce.Event); err != nil {
-					c.channelError.Publish(ce.Error)
-					continue
-				}
+			if err := c.handler.Handle(ctx, ce.Event); err != nil {
+				c.channelError.Publish(ce.Error)
+				continue
+			}
 
-				c.logTrailingDB.FulfillEvent(ce.Event)
+			if err := c.logTrailingDB.FulfillEvent(ce.Event); err != nil {
+				c.channelError.Publish(ce.Error)
+				continue
 			}
 		}
 	}()
