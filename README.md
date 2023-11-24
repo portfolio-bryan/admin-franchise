@@ -26,9 +26,25 @@ Use the right envs for the previous command.
 
 ## Flow Diagram
 
+The next diagram is a representation of the flow of the application for the creation and update franchise use cases.
+
+![Flow Diagram](./docs/images/ClubHub-tech-test-Flows.jpg)
+
+The use cases to get franchise and get company are direct queries to the database, so they are not represented in the diagram.
+
+In the next image you can see a more specific flow for the creation request.
+
+![Flow Diagram](./docs/images/ClubHub-tech-test-Flows-Creation.jpg)
+
+It is used an async process to handle the scrapping process in another goroutine, so the request can be finished and the user can get a response. The scrapping process is handled by the strategy ChannelOwner/ChannelUtilizer, so we can have a better control of the process and we can handle the errors in a better way.
+
 ## Datamodel
 
-## C2
+The next diagram is a representation of the datamodel of the application.
+
+![Datamodel](./docs/images/ClubHub-tech-test-DataModel.jpg)
+
+The two tables `transaction_log_trailing` and `incomplete_franchise` are used to help to edge cases of the application. The first one is used to handle async process in memory with the strategy ChannelOwner/ChannelUtilizer, so we can know if a event was processed or not. The second one is used to handle the case when a franchise has dirty data and it is not possible to save like a franchise, so we save it in this table and we can handle it later.
 
 ## API Documentation
 
