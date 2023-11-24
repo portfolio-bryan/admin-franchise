@@ -31,20 +31,28 @@ func (c ChannelUtilizer) Use(channelEvent <-chan ChannelEvent) {
 		}()
 
 		for ce := range channelEvent {
-			if ce.Error != nil {
-				c.channelError.Publish(ce.Error)
-				continue
-			}
+			go func(ce ChannelEvent) {
+				defer func() {
+					if err := recover(); err != nil {
+						log.Println("panic occurred in channel utilizer, the go function is rerun again:", err)
+					}
+				}()
 
-			if err := c.handler.Handle(ctx, ce.Event); err != nil {
-				c.channelError.Publish(ce.Error)
-				continue
-			}
+				if ce.Error != nil {
+					c.channelError.Publish(ce.Error)
+					return
+				}
 
-			if err := c.logTrailingDB.FulfillEvent(ce.Event); err != nil {
-				c.channelError.Publish(ce.Error)
-				continue
-			}
+				if err := c.handler.Handle(ctx, ce.Event); err != nil {
+					c.channelError.Publish(ce.Error)
+					return
+				}
+
+				if err := c.logTrailingDB.FulfillEvent(ce.Event); err != nil {
+					c.channelError.Publish(ce.Error)
+					return
+				}
+			}(ce)
 		}
 	}()
 }
