@@ -63,8 +63,31 @@ func (r *queryResolver) GetFranchise(ctx context.Context, criteria *model.Franch
 }
 
 // GetCompany is the resolver for the getCompany field.
-func (r *queryResolver) GetCompany(ctx context.Context) ([]*model.Company, error) {
-	panic(fmt.Errorf("not implemented: GetCompany - getCompany"))
+func (r *queryResolver) GetCompany(ctx context.Context, criteria *model.CompanyCriteria) (*model.Company, error) {
+	name := criteria.Name
+
+	comp, err := r.companyGetter.GetCompanyByName(ctx, *name)
+	if err != nil {
+		return nil, err
+	}
+
+	dto := comp.DTO()
+
+	return &model.Company{
+		ID:   dto.ID,
+		Name: dto.Name,
+		Owner: &model.OwnerCompany{
+			ID: dto.CompanyOwnerID,
+		},
+		TaxNumber: dto.TaxNumber,
+		Location: &model.Location{
+			ID: dto.LocationID,
+		},
+		Franchises: []*model.Franchise{},
+		AddressLocation: &model.AddressLocation{
+			ID: dto.AddressLocationID,
+		},
+	}, nil
 }
 
 // GetFranchises is the resolver for the getFranchises field.

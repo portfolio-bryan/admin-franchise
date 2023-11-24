@@ -24,6 +24,10 @@ type Company struct {
 	Franchises      []*Franchise     `json:"franchises"`
 }
 
+type CompanyCriteria struct {
+	Name *string `json:"name,omitempty"`
+}
+
 type Franchise struct {
 	ID              string           `json:"id"`
 	Title           string           `json:"title"`

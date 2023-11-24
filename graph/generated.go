@@ -98,7 +98,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetCompany    func(childComplexity int) int
+		GetCompany    func(childComplexity int, criteria *model.CompanyCriteria) int
 		GetFranchise  func(childComplexity int, criteria *model.FranchiseCriteria) int
 		GetFranchises func(childComplexity int, criteria *model.FranchisesCriteria) int
 	}
@@ -110,7 +110,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	GetFranchise(ctx context.Context, criteria *model.FranchiseCriteria) (*model.Franchise, error)
-	GetCompany(ctx context.Context) ([]*model.Company, error)
+	GetCompany(ctx context.Context, criteria *model.CompanyCriteria) (*model.Company, error)
 	GetFranchises(ctx context.Context, criteria *model.FranchisesCriteria) ([]*model.Franchise, error)
 }
 
@@ -372,7 +372,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.GetCompany(childComplexity), true
+		args, err := ec.field_Query_getCompany_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetCompany(childComplexity, args["criteria"].(*model.CompanyCriteria)), true
 
 	case "Query.getFranchise":
 		if e.complexity.Query.GetFranchise == nil {
@@ -407,6 +412,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAddressLocationCriteria,
+		ec.unmarshalInputCompanyCriteria,
 		ec.unmarshalInputFranchiseCriteria,
 		ec.unmarshalInputFranchisesCriteria,
 		ec.unmarshalInputLocationCriteria,
@@ -579,6 +585,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getCompany_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.CompanyCriteria
+	if tmp, ok := rawArgs["criteria"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("criteria"))
+		arg0, err = ec.unmarshalOCompanyCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompanyCriteria(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["criteria"] = arg0
 	return args, nil
 }
 
@@ -2317,7 +2338,7 @@ func (ec *executionContext) _Query_getCompany(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetCompany(rctx)
+		return ec.resolvers.Query().GetCompany(rctx, fc.Args["criteria"].(*model.CompanyCriteria))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2329,9 +2350,9 @@ func (ec *executionContext) _Query_getCompany(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Company)
+	res := resTmp.(*model.Company)
 	fc.Result = res
-	return ec.marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompanyᚄ(ctx, field.Selections, res)
+	return ec.marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompany(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getCompany(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2359,6 +2380,17 @@ func (ec *executionContext) fieldContext_Query_getCompany(ctx context.Context, f
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Company", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getCompany_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -4374,6 +4406,35 @@ func (ec *executionContext) unmarshalInputAddressLocationCriteria(ctx context.Co
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCompanyCriteria(ctx context.Context, obj interface{}) (model.CompanyCriteria, error) {
+	var it model.CompanyCriteria
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputFranchiseCriteria(ctx context.Context, obj interface{}) (model.FranchiseCriteria, error) {
 	var it model.FranchiseCriteria
 	asMap := map[string]interface{}{}
@@ -5442,48 +5503,8 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCompany2ᚕᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompanyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Company) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompany(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
+func (ec *executionContext) marshalNCompany2githubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompany(ctx context.Context, sel ast.SelectionSet, v model.Company) graphql.Marshaler {
+	return ec._Company(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNCompany2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompany(ctx context.Context, sel ast.SelectionSet, v *model.Company) graphql.Marshaler {
@@ -5899,6 +5920,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOCompanyCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐCompanyCriteria(ctx context.Context, v interface{}) (*model.CompanyCriteria, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCompanyCriteria(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOFranchiseCriteria2ᚖgithubᚗcomᚋbperezgoᚋadmin_franchiseᚋgraphᚋmodelᚐFranchiseCriteria(ctx context.Context, v interface{}) (*model.FranchiseCriteria, error) {

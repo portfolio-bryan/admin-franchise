@@ -46,4 +46,20 @@ query franchiseQuery($criteria: FranchiseCriteria!) {
   }
 }
 
-NOTE: It lacks test configuration, logger configuration, and error handling. One Query and Update mutation
+query companyQuery($input: CompanyCriteria!) {
+  getCompany(criteria: $input) {
+    id
+    name
+    owner {
+      id
+    }
+  }
+}
+
+{
+  "input": {
+    "name": "Marriott International, Inc."
+  }
+}
+
+NOTE: logger configuration, and error handling. Update mutation

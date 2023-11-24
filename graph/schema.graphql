@@ -64,10 +64,14 @@ input FranchisesCriteria {
   location: LocationCriteria
 }
 
+input CompanyCriteria {
+  name: String
+}
+
 type Query {
   # Supporting only getting franchises by name
   getFranchise(criteria: FranchiseCriteria): Franchise!
-  getCompany: [Company!]!
+  getCompany(criteria: CompanyCriteria): Company!
   getFranchises(criteria: FranchisesCriteria): [Franchise!]!
 }
 
