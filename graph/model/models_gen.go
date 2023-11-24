@@ -26,7 +26,8 @@ type Company struct {
 
 type Franchise struct {
 	ID              string           `json:"id"`
-	Name            string           `json:"name"`
+	Title           string           `json:"title"`
+	SiteName        string           `json:"siteName"`
 	URL             string           `json:"url"`
 	Company         *Company         `json:"company"`
 	Location        *Location        `json:"location"`

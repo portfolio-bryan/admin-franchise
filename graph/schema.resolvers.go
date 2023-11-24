@@ -47,9 +47,9 @@ func (r *queryResolver) GetFranchise(ctx context.Context, criteria *model.Franch
 	dto := fran.DTO()
 
 	return &model.Franchise{
-		ID:   dto.ID,
-		URL:  dto.URL,
-		Name: dto.Title,
+		ID:    dto.ID,
+		URL:   dto.URL,
+		Title: dto.Title,
 		Company: &model.Company{
 			ID: dto.CompanyID,
 		},

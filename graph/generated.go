@@ -69,7 +69,8 @@ type ComplexityRoot struct {
 		Company         func(childComplexity int) int
 		ID              func(childComplexity int) int
 		Location        func(childComplexity int) int
-		Name            func(childComplexity int) int
+		SiteName        func(childComplexity int) int
+		Title           func(childComplexity int) int
 		URL             func(childComplexity int) int
 	}
 
@@ -237,12 +238,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Franchise.Location(childComplexity), true
 
-	case "Franchise.name":
-		if e.complexity.Franchise.Name == nil {
+	case "Franchise.siteName":
+		if e.complexity.Franchise.SiteName == nil {
 			break
 		}
 
-		return e.complexity.Franchise.Name(childComplexity), true
+		return e.complexity.Franchise.SiteName(childComplexity), true
+
+	case "Franchise.title":
+		if e.complexity.Franchise.Title == nil {
+			break
+		}
+
+		return e.complexity.Franchise.Title(childComplexity), true
 
 	case "Franchise.url":
 		if e.complexity.Franchise.URL == nil {
@@ -1171,8 +1179,10 @@ func (ec *executionContext) fieldContext_Company_franchises(ctx context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Franchise_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Franchise_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Franchise_title(ctx, field)
+			case "siteName":
+				return ec.fieldContext_Franchise_siteName(ctx, field)
 			case "url":
 				return ec.fieldContext_Franchise_url(ctx, field)
 			case "company":
@@ -1232,8 +1242,8 @@ func (ec *executionContext) fieldContext_Franchise_id(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Franchise_name(ctx context.Context, field graphql.CollectedField, obj *model.Franchise) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Franchise_name(ctx, field)
+func (ec *executionContext) _Franchise_title(ctx context.Context, field graphql.CollectedField, obj *model.Franchise) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Franchise_title(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1246,7 +1256,7 @@ func (ec *executionContext) _Franchise_name(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.Title, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1263,7 +1273,51 @@ func (ec *executionContext) _Franchise_name(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Franchise_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Franchise_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Franchise",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Franchise_siteName(ctx context.Context, field graphql.CollectedField, obj *model.Franchise) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Franchise_siteName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SiteName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Franchise_siteName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Franchise",
 		Field:      field,
@@ -1705,8 +1759,10 @@ func (ec *executionContext) fieldContext_Mutation_createFranchise(ctx context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Franchise_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Franchise_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Franchise_title(ctx, field)
+			case "siteName":
+				return ec.fieldContext_Franchise_siteName(ctx, field)
 			case "url":
 				return ec.fieldContext_Franchise_url(ctx, field)
 			case "company":
@@ -1774,8 +1830,10 @@ func (ec *executionContext) fieldContext_Mutation_updateFranchise(ctx context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Franchise_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Franchise_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Franchise_title(ctx, field)
+			case "siteName":
+				return ec.fieldContext_Franchise_siteName(ctx, field)
 			case "url":
 				return ec.fieldContext_Franchise_url(ctx, field)
 			case "company":
@@ -2215,8 +2273,10 @@ func (ec *executionContext) fieldContext_Query_getFranchise(ctx context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Franchise_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Franchise_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Franchise_title(ctx, field)
+			case "siteName":
+				return ec.fieldContext_Franchise_siteName(ctx, field)
 			case "url":
 				return ec.fieldContext_Franchise_url(ctx, field)
 			case "company":
@@ -2344,8 +2404,10 @@ func (ec *executionContext) fieldContext_Query_getFranchises(ctx context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Franchise_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Franchise_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Franchise_title(ctx, field)
+			case "siteName":
+				return ec.fieldContext_Franchise_siteName(ctx, field)
 			case "url":
 				return ec.fieldContext_Franchise_url(ctx, field)
 			case "company":
@@ -4676,8 +4738,13 @@ func (ec *executionContext) _Franchise(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "name":
-			out.Values[i] = ec._Franchise_name(ctx, field, obj)
+		case "title":
+			out.Values[i] = ec._Franchise_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "siteName":
+			out.Values[i] = ec._Franchise_siteName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
