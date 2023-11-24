@@ -49,7 +49,12 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 		return err
 	}
 
-	locationAggregate, err := location.NewLocation(uuid.NewString(), "country", "state", "city")
+	locationAggregate, err := location.NewLocation(
+		uuid.NewString(),
+		scrapResponse.WhoisData.Administrative.Country,
+		scrapResponse.WhoisData.Administrative.Province,
+		scrapResponse.WhoisData.Administrative.City,
+	)
 	if err != nil {
 		return err
 	}
@@ -59,7 +64,12 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 		return err
 	}
 
-	addressLocationAggregate, err := location.NewAddressLocation(uuid.NewString(), locationAggregate.DTO().ID, "address", "zipCode")
+	addressLocationAggregate, err := location.NewAddressLocation(
+		uuid.NewString(),
+		locationAggregate.DTO().ID,
+		scrapResponse.WhoisData.Administrative.Street,
+		scrapResponse.WhoisData.Administrative.PostalCode,
+	)
 	if err != nil {
 		return err
 	}
