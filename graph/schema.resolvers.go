@@ -37,7 +37,29 @@ func (r *mutationResolver) UpdateFranchise(ctx context.Context, id string, input
 
 // GetFranchise is the resolver for the getFranchise field.
 func (r *queryResolver) GetFranchise(ctx context.Context, criteria *model.FranchiseCriteria) (*model.Franchise, error) {
-	panic(fmt.Errorf("not implemented: GetFranchise - getFranchise"))
+	name := criteria.Name
+
+	fran, err := r.franchiseGetter.GetFranchiseByName(ctx, *name)
+	if err != nil {
+		return nil, err
+	}
+
+	dto := fran.DTO()
+
+	return &model.Franchise{
+		ID:   dto.ID,
+		URL:  dto.URL,
+		Name: dto.Title,
+		Company: &model.Company{
+			ID: dto.CompanyID,
+		},
+		Location: &model.Location{
+			ID: dto.LocationID,
+		},
+		AddressLocation: &model.AddressLocation{
+			ID: dto.AddressLocationID,
+		},
+	}, nil
 }
 
 // GetCompany is the resolver for the getCompany field.

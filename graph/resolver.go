@@ -3,6 +3,7 @@ package graph
 import (
 	"github.com/bperezgo/admin_franchise/config"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/createfranchise"
+	"github.com/bperezgo/admin_franchise/internal/domain/usecases/getfranchise"
 	repo "github.com/bperezgo/admin_franchise/internal/platform/repositories/postgres"
 	"github.com/bperezgo/admin_franchise/shared/platform/event"
 	"github.com/bperezgo/admin_franchise/shared/platform/repositories/postgres"
@@ -14,6 +15,7 @@ import (
 
 type Resolver struct {
 	franchiseCreatorRequestReceiver createfranchise.FranchiseCreatorRequestReceiver
+	franchiseGetter                 getfranchise.FranchiseGetter
 }
 
 func NewResolver() *Resolver {
@@ -45,7 +47,12 @@ func NewResolver() *Resolver {
 	channelUtilizer.Use(channelOwner.ChannelEvents())
 
 	franchiseCreatorRequestReceiver := createfranchise.NewFranchiseCreatorRequestReceiver(channelOwner)
+
+	// FranchiseGetter UseCase
+	franchiseGetter := getfranchise.NewFranchiseGetter(franchiseRepository)
+
 	return &Resolver{
 		franchiseCreatorRequestReceiver: franchiseCreatorRequestReceiver,
+		franchiseGetter:                 franchiseGetter,
 	}
 }
