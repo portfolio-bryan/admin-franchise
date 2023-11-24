@@ -7,24 +7,28 @@ import (
 )
 
 type ChannelOwner struct {
-	// TODO: Use an strategy to handle many channels and subscriptions
-	channelEvents chan ChannelEvent
 	// With this repository we can handle async processes with the channels
 	logTrailingDB LogTrailingDB
 
 	channelError ChannelError
+
+	channelEvents map[event.Type]chan ChannelEvent
 }
 
 func NewChannelOwner(logTrailingDB LogTrailingDB, channelError ChannelError) ChannelOwner {
-	channelEvents := make(chan ChannelEvent)
 	return ChannelOwner{
-		channelEvents: channelEvents,
 		logTrailingDB: logTrailingDB,
+		channelError:  channelError,
+		channelEvents: make(map[event.Type]chan ChannelEvent),
 	}
 }
 
-func (c ChannelOwner) ChannelEvents() <-chan ChannelEvent {
-	return c.channelEvents
+func (c ChannelOwner) ChannelEvent(evtType event.Type) <-chan ChannelEvent {
+	_, ok := c.channelEvents[evtType]
+	if !ok {
+		c.channelEvents[evtType] = make(chan ChannelEvent)
+	}
+	return c.channelEvents[evtType]
 }
 
 func (c ChannelOwner) Publish(ctx context.Context, events []event.Event) error {
@@ -38,7 +42,8 @@ func (c ChannelOwner) Publish(ctx context.Context, events []event.Event) error {
 			Event: evt,
 		}
 
-		c.channelEvents <- ce
+		channelEvent := c.channelEvents[evt.Type()]
+		channelEvent <- ce
 	}
 
 	return nil

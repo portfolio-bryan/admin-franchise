@@ -2,6 +2,7 @@ package graph
 
 import (
 	"github.com/bperezgo/admin_franchise/config"
+	"github.com/bperezgo/admin_franchise/internal/domain/franchise"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/createfranchise"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/getfranchise"
 	repo "github.com/bperezgo/admin_franchise/internal/platform/repositories/postgres"
@@ -44,7 +45,7 @@ func NewResolver() *Resolver {
 		locationRepository,
 	)
 	channelUtilizer := event.NewChannelUtilizer(franchiseCreator, channelError, logTrailingDB)
-	channelUtilizer.Use(channelOwner.ChannelEvents())
+	channelUtilizer.Use(channelOwner.ChannelEvent(franchise.FranchiseRequestReceivedType))
 
 	franchiseCreatorRequestReceiver := createfranchise.NewFranchiseCreatorRequestReceiver(channelOwner)
 
