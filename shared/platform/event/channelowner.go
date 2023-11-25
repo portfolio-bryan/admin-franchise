@@ -7,8 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type ChannelID string
-
 type ChannelOwner struct {
 	// With this repository we can handle async processes with the channels
 	logTrailingDB LogTrailingDB
@@ -27,17 +25,16 @@ func NewChannelOwner(logTrailingDB LogTrailingDB, channelError ChannelError) Cha
 	}
 }
 
-// Posible bug: if the channel utilizer is repeated in the injection, it will be repeated innecessary the message
-func (c ChannelOwner) GetChannel(evtType event.Type, channelID ChannelID) <-chan ChannelEvent {
+func (c ChannelOwner) GetChannel(evtType event.Type, channelUtilizer ChannelUtilizer) <-chan ChannelEvent {
 	_, ok := c.channelEvents[evtType]
 	if !ok {
 		c.channelEvents[evtType] = make(map[ChannelID]chan ChannelEvent)
 	}
-	_, ok = c.channelEvents[evtType][channelID]
+	_, ok = c.channelEvents[evtType][channelUtilizer.channelID]
 	if !ok {
-		c.channelEvents[evtType][channelID] = make(chan ChannelEvent)
+		c.channelEvents[evtType][channelUtilizer.channelID] = make(chan ChannelEvent)
 	}
-	return c.channelEvents[evtType][channelID]
+	return c.channelEvents[evtType][channelUtilizer.channelID]
 }
 
 func (c ChannelOwner) Subscribe(channelUtilizer ChannelUtilizer) ChannelID {

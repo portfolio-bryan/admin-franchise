@@ -5,9 +5,13 @@ import (
 	"log"
 
 	"github.com/bperezgo/admin_franchise/shared/domain/event"
+	"github.com/google/uuid"
 )
 
+type ChannelID string
+
 type ChannelUtilizer struct {
+	channelID     ChannelID
 	handler       event.Handler
 	channelError  ChannelError
 	logTrailingDB LogTrailingDB
@@ -15,6 +19,7 @@ type ChannelUtilizer struct {
 
 func NewChannelUtilizer(handler event.Handler, channelError ChannelError, logTrailingDB LogTrailingDB) ChannelUtilizer {
 	return ChannelUtilizer{
+		channelID:     ChannelID(uuid.NewString()),
 		handler:       handler,
 		channelError:  channelError,
 		logTrailingDB: logTrailingDB,
