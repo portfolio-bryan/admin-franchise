@@ -29,12 +29,6 @@ func NewChannelUtilizer(handler event.Handler, channelError ChannelError, logTra
 func (c ChannelUtilizer) Use(channelEvent <-chan ChannelEvent) {
 	ctx := context.Background()
 	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				log.Println("panic occurred in channel utilizer, the go function is rerun again:", err)
-			}
-		}()
-
 		for ce := range channelEvent {
 			go func(ce ChannelEvent) {
 				defer func() {

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	urlLib "net/url"
 
+	"github.com/bperezgo/admin_franchise/shared/platform/concurrency"
 	"github.com/likexian/whois"
 	whoisparser "github.com/likexian/whois-parser"
 	"golang.org/x/net/html"
@@ -48,23 +49,32 @@ type SSLLabsResponse struct {
 }
 
 func ScrapFranquise(ctx context.Context, url string) (ScrapResponse, error) {
+	done := make(chan interface{})
+
+	defer close(done)
 	// Get HTML meta data
-	htmlMetaData, err := GetHTMLMetaData(url)
-
-	if err != nil {
-		return ScrapResponse{}, err
-	}
-
+	channGetHTMLMetaData := GetHTMLMetaData(url)
 	// Get information of the protocol and jumps
-	protocolAndJumps, err := GetProtocolAndJumps(url)
-	if err != nil {
-		return ScrapResponse{}, err
-	}
-
+	channProtocolAndJumps := GetProtocolAndJumps(url)
 	// Get whois data
-	whoisData, err := GetWhoisData(url)
-	if err != nil {
-		return ScrapResponse{}, err
+	chanWhois := GetWhoisData(url)
+
+	multiplexedStream := concurrency.Fanin(done, channGetHTMLMetaData, channProtocolAndJumps, chanWhois)
+
+	var htmlMetaData HTMLMeta
+	var protocolAndJumps ProtocolAndJumps
+	var whoisData whoisparser.WhoisInfo
+
+	// TODO: Errors need to be handled
+	for v := range multiplexedStream {
+		switch v.Data.(type) {
+		case HTMLMeta:
+			htmlMetaData = v.Data.(HTMLMeta)
+		case ProtocolAndJumps:
+			protocolAndJumps = v.Data.(ProtocolAndJumps)
+		case whoisparser.WhoisInfo:
+			whoisData = v.Data.(whoisparser.WhoisInfo)
+		}
 	}
 
 	return ScrapResponse{
@@ -75,20 +85,32 @@ func ScrapFranquise(ctx context.Context, url string) (ScrapResponse, error) {
 	}, nil
 }
 
-func GetHTMLMetaData(url string) (HTMLMeta, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return HTMLMeta{}, err
-	}
+func GetHTMLMetaData(url string) <-chan concurrency.ChannelData {
+	chann := make(chan concurrency.ChannelData)
 
-	defer resp.Body.Close()
+	go func() {
+		defer close(chann)
+		resp, err := http.Get(url)
+		if err != nil {
+			chann <- concurrency.ChannelData{
+				Error: err,
+			}
+			return
+		}
 
-	meta := extract(resp.Body)
+		defer resp.Body.Close()
 
-	return *meta, nil
+		meta := extract(resp.Body)
+
+		chann <- concurrency.ChannelData{
+			Data: meta,
+		}
+	}()
+
+	return chann
 }
 
-func extract(resp io.Reader) *HTMLMeta {
+func extract(resp io.Reader) HTMLMeta {
 	z := html.NewTokenizer(resp)
 
 	titleFound := false
@@ -99,11 +121,11 @@ func extract(resp io.Reader) *HTMLMeta {
 		tt := z.Next()
 		switch tt {
 		case html.ErrorToken:
-			return hm
+			return *hm
 		case html.StartTagToken, html.SelfClosingTagToken:
 			t := z.Token()
 			if t.Data == `body` {
-				return hm
+				return *hm
 			}
 			if t.Data == "title" {
 				titleFound = true
@@ -158,51 +180,88 @@ func extractMetaProperty(t html.Token, prop string) (content string, ok bool) {
 	return
 }
 
-func GetProtocolAndJumps(url string) (ProtocolAndJumps, error) {
-	ssllabsUrl := fmt.Sprintf("https://api.ssllabs.com/api/v3/analyze?host=%s", url)
+func GetProtocolAndJumps(url string) <-chan concurrency.ChannelData {
+	chann := make(chan concurrency.ChannelData)
 
-	resp, err := http.Get(ssllabsUrl)
-	if err != nil {
-		return ProtocolAndJumps{}, err
-	}
+	go func() {
+		defer close(chann)
 
-	defer resp.Body.Close()
+		ssllabsUrl := fmt.Sprintf("https://api.ssllabs.com/api/v3/analyze?host=%s", url)
 
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return ProtocolAndJumps{}, err
-	}
+		resp, err := http.Get(ssllabsUrl)
+		if err != nil {
+			chann <- concurrency.ChannelData{
+				Error: err,
+			}
+			return
+		}
 
-	sslLabsResponse := SSLLabsResponse{}
+		defer resp.Body.Close()
 
-	err = json.Unmarshal(b, &sslLabsResponse)
-	if err != nil {
-		return ProtocolAndJumps{}, err
-	}
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			chann <- concurrency.ChannelData{
+				Error: err,
+			}
+			return
+		}
 
-	return ProtocolAndJumps{
-		Protocol: sslLabsResponse.Protocol,
-		Jumps:    len(sslLabsResponse.Endpoints),
-	}, nil
+		sslLabsResponse := SSLLabsResponse{}
+
+		err = json.Unmarshal(b, &sslLabsResponse)
+		if err != nil {
+			chann <- concurrency.ChannelData{
+				Error: err,
+			}
+			return
+		}
+
+		chann <- concurrency.ChannelData{
+			Data: ProtocolAndJumps{
+				Protocol: sslLabsResponse.Protocol,
+				Jumps:    len(sslLabsResponse.Endpoints),
+			},
+		}
+	}()
+
+	return chann
 }
 
-func GetWhoisData(url string) (whoisparser.WhoisInfo, error) {
-	r, err := urlLib.Parse(url)
-	if err != nil {
-		return whoisparser.WhoisInfo{}, err
-	}
+func GetWhoisData(url string) <-chan concurrency.ChannelData {
+	chann := make(chan concurrency.ChannelData)
 
-	whois_raw, err := whois.Whois(r.Host)
-	if err != nil {
-		return whoisparser.WhoisInfo{}, err
-	}
+	go func() {
+		defer close(chann)
 
-	result, err := whoisparser.Parse(whois_raw)
+		r, err := urlLib.Parse(url)
+		if err != nil {
+			chann <- concurrency.ChannelData{
+				Error: err,
+			}
+			return
+		}
 
-	if err != nil {
-		return whoisparser.WhoisInfo{}, err
-	}
+		whois_raw, err := whois.Whois(r.Host)
+		if err != nil {
+			chann <- concurrency.ChannelData{
+				Error: err,
+			}
+			return
+		}
 
-	return result, nil
+		result, err := whoisparser.Parse(whois_raw)
 
+		if err != nil {
+			chann <- concurrency.ChannelData{
+				Error: err,
+			}
+			return
+		}
+
+		chann <- concurrency.ChannelData{
+			Data: result,
+		}
+	}()
+
+	return chann
 }
