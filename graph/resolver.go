@@ -47,7 +47,8 @@ func NewResolver() *Resolver {
 		locationRepository,
 	)
 	channelUtilizer := event.NewChannelUtilizer(franchiseCreator, channelError, logTrailingDB)
-	channelUtilizer.Use(channelOwner.ChannelEvent(franchise.FranchiseRequestReceivedType))
+	channelID := channelOwner.Subscribe(channelUtilizer)
+	channelUtilizer.Use(channelOwner.GetChannel(franchise.FranchiseRequestReceivedType, channelID))
 
 	franchiseCreatorRequestReceiver := createfranchise.NewFranchiseCreatorRequestReceiver(channelOwner)
 
