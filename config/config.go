@@ -46,7 +46,9 @@ func InitConfig() error {
 			return err
 		}
 		p := path.Join(cwd, "../../.test.env")
-		return godotenv.Load(os.ExpandEnv(p))
+		if err := godotenv.Load(os.ExpandEnv(p)); err != nil {
+			log.Println(".test.env file does not exist")
+		}
 	}
 
 	return nil
