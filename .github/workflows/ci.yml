@@ -9,6 +9,10 @@ jobs:
     name: Running CI
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -22,6 +26,29 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.54
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ROLE_TO_ASSUME }}
+          aws-region: us-east-2
+
+      - name: Get Secret from AWS Secrets Manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        with:
+          secret-ids:
+            ADMIN_FRANCHISE_ACTION
+          parse-json-secrets: false
+      
+      - name: Parse environments
+        run: |
+          echo $ADMIN_FRANCHISE_ACTION | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' > .test.env
+          for s in $(echo $ADMIN_FRANCHISE_ACTION | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" ); do
+            export $s
+          done
+      
+      - name: simple smoke test
+        run: echo $SERVER_PORT && echo $ADMIN_FRANCHISE_ACTION_SERVER_PORT
       
       - name: Run tests
-        run: make test
+        run: echo $SERVER_PORT && make test
