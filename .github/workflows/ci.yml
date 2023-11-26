@@ -36,12 +36,19 @@ jobs:
       - name: Get Secret from AWS Secrets Manager
         uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
-          secret-ids: |
-            ,ADMIN_FRANCHISE_ACTION
-          parse-json-secrets: true
+          secret-ids:
+            ADMIN_FRANCHISE_ACTION
+          parse-json-secrets: false
+      
+      - name: Parse environments
+        run: |
+          echo $ADMIN_FRANCHISE_ACTION | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' > .test.env
+          for s in $(echo $ADMIN_FRANCHISE_ACTION | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]" ); do
+            export $s
+          done
       
       - name: simple smoke test
-        run: echo $SERVER_PORT
+        run: echo $SERVER_PORT && echo $ADMIN_FRANCHISE_ACTION_SERVER_PORT
       
       - name: Run tests
         run: echo $SERVER_PORT && make test
