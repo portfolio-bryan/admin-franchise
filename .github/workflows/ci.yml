@@ -36,8 +36,8 @@ jobs:
       - name: Get Secret from AWS Secrets Manager
         uses: aws-actions/aws-secretsmanager-get-secrets@v1
         with:
-          secret-ids:
-            ADMIN_FRANCHISE_ACTION
+          secret-ids: |
+            ,ADMIN_FRANCHISE_ACTION
           parse-json-secrets: true
       
       - name: simple smoke test
