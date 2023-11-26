@@ -40,5 +40,8 @@ jobs:
             ADMIN_FRANCHISE_ACTION
           parse-json-secrets: true
       
+      - name: simple smoke test
+        run: echo $SERVER_PORT
+      
       - name: Run tests
-        run: make test
+        run: echo $SERVER_PORT && make test
