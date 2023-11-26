@@ -65,8 +65,14 @@ func ScrapFranquise(ctx context.Context, url string) (ScrapResponse, error) {
 	var protocolAndJumps ProtocolAndJumps
 	var whoisData whoisparser.WhoisInfo
 
-	// TODO: Errors need to be handled
+	errors := []error{}
+
 	for v := range multiplexedStream {
+		if v.Error != nil {
+			errors = append(errors, v.Error)
+			continue
+		}
+
 		switch v.Data.(type) {
 		case HTMLMeta:
 			htmlMetaData = v.Data.(HTMLMeta)
@@ -75,6 +81,10 @@ func ScrapFranquise(ctx context.Context, url string) (ScrapResponse, error) {
 		case whoisparser.WhoisInfo:
 			whoisData = v.Data.(whoisparser.WhoisInfo)
 		}
+	}
+
+	if len(errors) > 0 {
+		return ScrapResponse{}, fmt.Errorf("errors: %v", errors)
 	}
 
 	return ScrapResponse{

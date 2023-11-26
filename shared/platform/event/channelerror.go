@@ -7,11 +7,11 @@ import (
 )
 
 type ChannelError struct {
-	internalChan chan domain.WrapError
+	internalChan chan domain.Error
 }
 
 func NewChannelError() ChannelError {
-	internalChan := make(chan domain.WrapError)
+	internalChan := make(chan domain.Error)
 
 	ce := ChannelError{
 		internalChan: internalChan,
@@ -21,7 +21,7 @@ func NewChannelError() ChannelError {
 }
 
 func (c ChannelError) Publish(err error) {
-	c.internalChan <- domain.WrapError{
+	c.internalChan <- domain.Error{
 		Err: err,
 	}
 }
