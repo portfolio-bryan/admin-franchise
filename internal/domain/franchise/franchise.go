@@ -7,6 +7,8 @@ import (
 	"path"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/bperezgo/admin_franchise/shared/domain"
+	"github.com/bperezgo/admin_franchise/shared/domain/event"
 	"github.com/bperezgo/admin_franchise/shared/domain/valueobjects"
 )
 
@@ -30,6 +32,7 @@ type FranchiseDTO struct {
 }
 
 type Franchise struct {
+	domain.Aggregate
 	id                   FranchiseID
 	url                  FranchiseURL
 	companyId            valueobjects.UID
@@ -46,6 +49,8 @@ type Franchise struct {
 	registrantEmail      FranchiseRegistrantEmail
 	locationId           valueobjects.UID
 	addressLocationId    valueobjects.UID
+
+	events []event.Event
 }
 
 func NewFranchise(franchiseDTO FranchiseDTO) (Franchise, error) {
@@ -129,7 +134,7 @@ func NewFranchise(franchiseDTO FranchiseDTO) (Franchise, error) {
 		return Franchise{}, err
 	}
 
-	return Franchise{
+	franchise := Franchise{
 		id:                   idVO,
 		url:                  urlVO,
 		companyId:            companyIdVO,
@@ -146,7 +151,13 @@ func NewFranchise(franchiseDTO FranchiseDTO) (Franchise, error) {
 		registrantEmail:      registrantEmailVO,
 		locationId:           locationIdVO,
 		addressLocationId:    addressLocationIdVO,
-	}, nil
+
+		Aggregate: domain.NewAggregate(franchiseDTO, FranchiseCreatedType),
+	}
+
+	franchise.Record(NewFranchiseCreatedEvent(franchiseDTO))
+
+	return franchise, nil
 }
 
 func (f Franchise) DTO() FranchiseDTO {

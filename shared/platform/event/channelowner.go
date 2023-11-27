@@ -2,6 +2,7 @@ package event
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/bperezgo/admin_franchise/shared/domain/event"
 	"github.com/google/uuid"
@@ -52,7 +53,12 @@ func (c ChannelOwner) Publish(ctx context.Context, events []event.Event) error {
 			Event: evt,
 		}
 
-		channelEvents := c.channelEvents[evt.Type()]
+		channelEvents, ok := c.channelEvents[evt.Type()]
+		if !ok {
+			c.channelError.Publish(fmt.Errorf("event type %s not found", evt.Type()))
+			continue
+		}
+
 		for _, channelEvent := range channelEvents {
 			channelEvent <- ce
 		}

@@ -11,6 +11,7 @@ import (
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/scrapfranquise"
 	"github.com/bperezgo/admin_franchise/internal/ports"
 	"github.com/bperezgo/admin_franchise/shared/domain/event"
+	sharedevent "github.com/bperezgo/admin_franchise/shared/domain/event"
 	"github.com/google/uuid"
 )
 
@@ -18,17 +19,20 @@ type FranchiseCreator struct {
 	franchiseRepository ports.FranchiseRepository
 	companyRepository   ports.CompanyRepository
 	locationRepository  ports.LocationRepository
+	eventBus            sharedevent.Bus
 }
 
 func NewFranchiseCreator(
 	franchiseRepository ports.FranchiseRepository,
 	companyRepository ports.CompanyRepository,
 	locationRepository ports.LocationRepository,
+	eventBus sharedevent.Bus,
 ) FranchiseCreator {
 	return FranchiseCreator{
 		franchiseRepository: franchiseRepository,
 		companyRepository:   companyRepository,
 		locationRepository:  locationRepository,
+		eventBus:            eventBus,
 	}
 }
 
@@ -120,7 +124,12 @@ func (f FranchiseCreator) Handle(ctx context.Context, evt event.Event) error {
 
 	if err != nil {
 		return f.franchiseRepository.SaveIncompleteFranchise(ctx, domainFranchise.NewIncompleteFranchise(franchiseDTO))
+		// TODO: Publish an event to notify that the franchise is incomplete
 	}
 
-	return f.franchiseRepository.Upsert(ctx, franchise)
+	if err := f.franchiseRepository.Upsert(ctx, franchise); err != nil {
+		return err
+	}
+
+	return f.eventBus.Publish(ctx, franchise.PullEvents())
 }

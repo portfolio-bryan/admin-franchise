@@ -6,6 +6,7 @@ import (
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/createfranchise"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/getcompany"
 	"github.com/bperezgo/admin_franchise/internal/domain/usecases/getfranchise"
+	"github.com/bperezgo/admin_franchise/internal/domain/usecases/notify"
 	repo "github.com/bperezgo/admin_franchise/internal/platform/repositories/postgres"
 	"github.com/bperezgo/admin_franchise/shared/platform/event"
 	"github.com/bperezgo/admin_franchise/shared/platform/repositories/postgres"
@@ -45,9 +46,10 @@ func NewResolver() *Resolver {
 		franchiseRepository,
 		companyRepository,
 		locationRepository,
+		channelOwner,
 	)
-	channelUtilizer := event.NewChannelUtilizer(franchiseCreator, channelError, logTrailingDB)
-	channelUtilizer.Use(channelOwner.GetChannel(franchise.FranchiseRequestReceivedType, channelUtilizer))
+	channelUtilizerFC := event.NewChannelUtilizer(franchiseCreator, channelError, logTrailingDB)
+	channelUtilizerFC.Use(channelOwner.GetChannel(franchise.FranchiseRequestReceivedType, channelUtilizerFC))
 
 	franchiseCreatorRequestReceiver := createfranchise.NewFranchiseCreatorRequestReceiver(channelOwner)
 
@@ -56,6 +58,12 @@ func NewResolver() *Resolver {
 
 	// CompanyGetter UseCase
 	companyGetter := getcompany.NewCompanyGetter(companyRepository)
+
+	// Notification UseCase
+	notificationHandler := notify.NewNotificationHandler()
+
+	channelUtilizerNot := event.NewChannelUtilizer(notificationHandler, channelError, logTrailingDB)
+	channelUtilizerNot.Use(channelOwner.GetChannel(franchise.FranchiseCreatedType, channelUtilizerNot))
 
 	return &Resolver{
 		franchiseCreatorRequestReceiver: franchiseCreatorRequestReceiver,
