@@ -1,6 +1,9 @@
 package middlewares
 
 import (
+	"bytes"
+	"io"
+
 	"github.com/bperezgo/admin_franchise/shared/platform/handlertypes"
 	"github.com/bperezgo/admin_franchise/shared/platform/logger"
 	"github.com/gin-gonic/gin"
@@ -18,12 +21,25 @@ func LoggingMiddleware() gin.HandlerFunc {
 			requestID = ""
 		}
 
+		byteBody, err := io.ReadAll(c.Request.Body)
+
+		if err != nil {
+			c.AbortWithStatusJSON(500, gin.H{
+				"message": "Error reading request body",
+			})
+			return
+		}
+
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(byteBody))
+
 		l := logger.GetLogger()
 		l.Info(logger.LogInput{
 			Action: "REQUEST",
 			State:  logger.SUCCESS,
 			Http: &logger.LogHttpInput{
-				Request: handlertypes.Request{},
+				Request: handlertypes.Request{
+					Body: string(byteBody),
+				},
 			},
 			Meta: &handlertypes.Meta{
 				RequestId: requestID,
@@ -35,7 +51,11 @@ func LoggingMiddleware() gin.HandlerFunc {
 		l.Info(logger.LogInput{
 			Action: "RESPONSE",
 			State:  logger.SUCCESS,
-			Http:   &logger.LogHttpInput{},
+			Http: &logger.LogHttpInput{
+				Request: handlertypes.Request{
+					Body: string(byteBody),
+				},
+			},
 			Meta: &handlertypes.Meta{
 				RequestId: requestID,
 			},

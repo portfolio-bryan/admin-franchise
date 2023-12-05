@@ -10,7 +10,7 @@ type Meta struct {
 }
 
 type Request struct {
-	Body    []byte
+	Body    string
 	Headers Headers
 	Query   interface{}
 	Params  interface{}
